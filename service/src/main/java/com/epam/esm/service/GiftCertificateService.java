@@ -3,6 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.dto.GiftCertificateDTO;
 import com.epam.esm.dto.TagDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.model.GiftCertificate;
 
 import java.util.List;
 

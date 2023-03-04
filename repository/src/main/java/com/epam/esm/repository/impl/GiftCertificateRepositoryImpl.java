@@ -61,7 +61,11 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
     }
 
     @Override
-    public void insertTags(GiftCertificate certificate) {
+    public void addTags(GiftCertificate giftCertificate) {
+        log.info("> > > Adding New Tags . . .");
+        giftCertificate.getTags().forEach(tag -> jdbcTemplate.update(
+                TableQueries.SAVE_TAGS_TO_GIFT_CERTIFICATES.getQuery(), giftCertificate.getId(), tag.getId()));
+        setAllTags(giftCertificate);
     }
 
     @Override

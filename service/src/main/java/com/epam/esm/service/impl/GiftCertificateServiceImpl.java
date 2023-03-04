@@ -13,6 +13,7 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,10 +68,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
 
     @Override
     public boolean save(GiftCertificateDTO giftCertificateDTO) throws ServiceException {
-        GiftCertificate giftCertificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
-        giftCertificateRepository.save(giftCertificate);
-//        giftCertificateDTO.getTags().stream().forEach(tag -> tag.setId());
-        return false;
+        log.info("> > > { Add New Gift Certificate }");
+        try {
+            GiftCertificate giftCertificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
+            boolean save = giftCertificateRepository.save(giftCertificate);
+            giftCertificateRepository.addTags(giftCertificate);
+            return save;
+        } catch (DataAccessException e) {
+            log.error("Could not create gift certificate - > {}", e.getMessage());
+            throw new ServiceException("Error saving resource", e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -87,4 +94,5 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     public List<GiftCertificateDTO> getByTag(TagDTO tag) throws ResourceNotFoundException {
         return null;
     }
+
 }
