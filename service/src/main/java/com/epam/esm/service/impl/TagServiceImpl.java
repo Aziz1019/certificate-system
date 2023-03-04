@@ -15,8 +15,8 @@ public class TagServiceImpl implements TagService<TagDTO> {
     }
 
     @Override
-    public Optional<TagDTO> getById(long id) {
-        return Optional.empty();
+    public TagDTO getById(long id) {
+        return null;
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.GiftCertificateDTO;
-import com.epam.esm.exception.RepositoryException;
-import com.epam.esm.model.GiftCertificate;
-import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.service.GiftCertificateService;
 import com.google.gson.Gson;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +25,7 @@ public class GiftCertificateController {
 
     @GetMapping("/certificates")
     public ResponseEntity<String> getCertificates(){
+        System.out.println(gson.toJson(giftCertificateService.getAll()));
         return ResponseEntity.ok(gson.toJson(giftCertificateService.getAll()));
     }
 }

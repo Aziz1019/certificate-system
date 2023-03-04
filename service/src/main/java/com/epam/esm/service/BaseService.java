@@ -1,11 +1,13 @@
 package com.epam.esm.service;
 
+import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.exception.ServiceException;
+
 import java.util.List;
-import java.util.Optional;
 
 public interface BaseService <T>{
-    List<T> getAll();
-    Optional<T> getById(long id);
-    boolean save(T t);
-    boolean delete(long id);
+    List<T> getAll() throws ResourceNotFoundException;
+    T getById(long id) throws ResourceNotFoundException;
+    boolean save(T t) throws ServiceException;
+    boolean delete(long id) throws ResourceNotFoundException;
 }

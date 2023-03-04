@@ -1,7 +1,8 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.model.GiftCertificate;
 
 public interface GiftCertificateRepository<T> extends BaseRepository<T> {
-    boolean update(T t) throws RepositoryException;
+    void insertTags(GiftCertificate certificate);
+    boolean update(T t);
 }
