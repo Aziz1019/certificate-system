@@ -9,6 +9,7 @@ public enum TableQueries {
     GET_GIFT_CERTIFICATES_BY_DESCRIPTION("select * from gift_certificate where description like ?"),
     SAVE_GIFT_CERTIFICATES("insert into gift_certificate (name, description, price, duration) values (?, ?, ?, ?) on conflict do nothing returning id"),
     UPDATE_GIFT_CERTIFICATES("update gift_certificate set name = coalesce(?, name), description = coalesce(?, description), price = coalesce(?, price), duration = coalesce(?, duration), last_update_date = now() where id = ?"),
+    DELETE_GIFT_CERTIFICATE("delete from gift_certificate where id = ?"),
 
     // TAGS GET, SAVE, DELETE TAGS
     GET_ALL_TAGS("select * from tag"),
@@ -19,11 +20,9 @@ public enum TableQueries {
 
     // Join Table GiftCertificate and Tag  || GET, SAVE, DELETE
     GET_ALL_GIFT_CERTIFICATES_TAGS("select * from gift_certificate_tag gc inner join tag t on t.id = gc.tag_id where certificate_id = ?"),
-    GET_GIFT_CERTIFICATES_BY_TAGS("select c.id, c.name, description, price, duration, create_date, last_update_date from gift_certificate c inner join gift_certificate_tag ct on c.id = ct.gift_certificate_id inner join tag t on t.id = ct.tag_id "),
+    GET_GIFT_CERTIFICATES_BY_TAGS("select c.id, c.name, description, price, duration, create_date, last_update_date from gift_certificate c inner join gift_certificate_tag ct on c.id = ct.certificate_id inner join tag t on t.id = ct.tag_id "),
     SAVE_TAGS_TO_GIFT_CERTIFICATES("insert into gift_certificate_tag (certificate_id, tag_id) values(?, ?)"),
-    DELETE_GIFT_CERTIFICATE("delete from gift_certificate where id = ?"),
-    DELETE_GIFT_CERTIFICATE_TAGS_ALL("delete from gift_certificate_tag where certificate_id = ?");
-
+    DELETE_GIFT_CERTIFICATE_TAGS("delete from gift_certificate_tag where certificate_id = ?");
 
     private final String query;
 

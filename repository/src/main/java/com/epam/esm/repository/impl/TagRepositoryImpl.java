@@ -24,7 +24,7 @@ public class TagRepositoryImpl implements TagRepository<Tag> {
 
     @Override
     public List<Tag> getAll() {
-        log.info(">>>>>> Loading { Getting Tags }  <<<<<<");
+        log.info("> > > Loading { Getting Tags }  < < <");
         return jdbcTemplate.query(TableQueries.GET_ALL_TAGS.getQuery(), tagRowMapper);
     }
 
