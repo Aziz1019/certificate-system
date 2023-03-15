@@ -150,8 +150,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     public List<GiftCertificateDTO> getByTag(TagDTO tag) throws ResourceNotFoundException {
         try {
             log.info("> > > { Getting Tags }");
-            return giftCertificateRepository.getByTag(tagMapper.toTag(tag)).stream()
-                    .map(certificateMapper::toGiftCertificateDTO).toList();
+            List<GiftCertificate> byTag = giftCertificateRepository.getByTag(tagMapper.toTag(tag));
+            return byTag.stream().map(certificateMapper::toGiftCertificateDTO).toList();
+//            return giftCertificateRepository.getByTag(tagMapper.toTag(tag)).stream()
+//                    .map(certificateMapper::toGiftCertificateDTO).toList();
 
         } catch (DataAccessException ex) {
             log.error("could not find gift certificate by tags {}", ex.getMessage());

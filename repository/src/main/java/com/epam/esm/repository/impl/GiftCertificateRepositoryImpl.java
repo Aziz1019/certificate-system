@@ -82,7 +82,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
     public List<GiftCertificate> getByTag(Tag tag) {
         log.info("Getting Gift Certificates by Tags");
         List<GiftCertificate> certificates = jdbcTemplate.query(
-                TableQueries.GET_GIFT_CERTIFICATES_BY_TAGS.getQuery(), certificateRowMapper, tag.getName());
+                TableQueries.GET_GIFT_CERTIFICATES_BY_TAGS.getQuery(), certificateRowMapper);
         certificates.forEach(this::setAllTags);
         return certificates;
     }

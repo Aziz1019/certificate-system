@@ -30,7 +30,6 @@ public class GiftCertificateController {
 
     @GetMapping("/certificates")
     public ResponseEntity<String> getCertificates(){
-        System.out.println(gson.toJson(giftCertificateService.getAll()));
         return ResponseEntity.ok(gson.toJson(giftCertificateService.getAll()));
     }
 
