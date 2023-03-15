@@ -47,9 +47,8 @@ public class GiftCertificateController {
             System.out.println("Problems with constraint");
             log.error("Something went wrong");
         }
-
         List<GiftCertificateDTO> byTag = giftCertificateService.getByTag(tagDTO);
-
+        System.out.println(giftCertificateService.getByTag(tagDTO));
         return ResponseEntity.ok(gson.toJson(byTag));
     }
 

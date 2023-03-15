@@ -152,6 +152,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             log.info("> > > { Getting Tags }");
             return giftCertificateRepository.getByTag(tagMapper.toTag(tag)).stream()
                     .map(certificateMapper::toGiftCertificateDTO).toList();
+
         } catch (DataAccessException ex) {
             log.error("could not find gift certificate by tags {}", ex.getMessage());
             throw new ResourceNotFoundException("Gift Certificate was not found!", ex);
