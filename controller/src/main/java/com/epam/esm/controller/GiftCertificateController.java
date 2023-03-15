@@ -6,6 +6,7 @@ import com.epam.esm.service.GiftCertificateService;
 import com.google.gson.Gson;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -51,5 +52,16 @@ public class GiftCertificateController {
         return ResponseEntity.ok(gson.toJson(byTag));
     }
 
+
+    @PostMapping("/certificates")
+    public ResponseEntity<String> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result){
+        log.info("> > > {Post Request | Create a new GiftCertificate");
+        if(result.hasErrors()){
+            System.out.println("Problems with constraint!");
+            log.error("Something went wrong with constraints!");
+        }
+        giftCertificateService.save(giftCertificateDTO);
+        return ResponseEntity.ok("Gift Certificate successfully created!");
+    }
 
 }

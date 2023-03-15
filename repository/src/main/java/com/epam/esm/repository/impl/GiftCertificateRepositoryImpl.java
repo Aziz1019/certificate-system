@@ -47,14 +47,13 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
     }
 
     @Override
-    public boolean save(GiftCertificate giftCertificate) {
+    public Long save(GiftCertificate giftCertificate) {
         log.info("> > >  { Creating / Adding new giftCertificate data }");
-        int update = jdbcTemplate.update(TableQueries.SAVE_GIFT_CERTIFICATES.getQuery(),
+        return jdbcTemplate.queryForObject(TableQueries.SAVE_GIFT_CERTIFICATES.getQuery(), Long.class,
                 giftCertificate.getName(),
                 giftCertificate.getDescription(),
                 giftCertificate.getPrice(),
                 giftCertificate.getDuration());
-        return update > 0;
     }
 
     @Override
