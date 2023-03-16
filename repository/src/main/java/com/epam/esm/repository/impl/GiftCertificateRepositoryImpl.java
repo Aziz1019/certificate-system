@@ -74,7 +74,8 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
                 giftCertificate.getName(),
                 giftCertificate.getDescription(),
                 giftCertificate.getPrice(),
-                giftCertificate.getDuration());
+                giftCertificate.getDuration(),
+                giftCertificate.getId());
     }
 
     @Override

@@ -35,11 +35,9 @@ public class TagRepositoryImpl implements TagRepository<Tag> {
     }
 
     @Override
-    public boolean save(Tag tag) {
+    public Long save(Tag tag) {
         log.info("> > > Loading { Saving / Adding Tags }");
-        int updated = jdbcTemplate.update(TableQueries.SAVE_TAG_NAME.getQuery(), tagRowMapper,
-                tag.getName());
-        return updated > 0;
+        return jdbcTemplate.queryForObject(TableQueries.SAVE_TAG_NAME.getQuery(), Long.class, tag.getName());
     }
 
     @Override

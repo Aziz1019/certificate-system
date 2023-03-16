@@ -52,7 +52,8 @@ public class TagServiceImpl implements TagService<TagDTO> {
     public boolean save(TagDTO tagDTO) throws ServiceException {
         try {
             log.info("> > > { Saving tag } ");
-            return tagRepository.save(tagMapper.toTag(tagDTO));
+            tagRepository.save(tagMapper.toTag(tagDTO));
+            return true;
         } catch (DataAccessException e) {
             log.error("Could not save TagDTO file, msg {}", e.getMessage());
             throw new ServiceException("Could not save TagDTO", HttpStatus.INTERNAL_SERVER_ERROR);

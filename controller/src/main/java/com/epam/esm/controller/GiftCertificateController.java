@@ -6,7 +6,6 @@ import com.epam.esm.service.GiftCertificateService;
 import com.google.gson.Gson;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/api")
+@RequestMapping("/api/certificates")
 public class GiftCertificateController {
     private final Gson gson;
     private final GiftCertificateService<GiftCertificateDTO> giftCertificateService;
@@ -29,12 +28,12 @@ public class GiftCertificateController {
         return "Hello!";
     }
 
-    @GetMapping("/certificates")
+    @GetMapping
     public ResponseEntity<String> getCertificates(){
         return ResponseEntity.ok(gson.toJson(giftCertificateService.getAll()));
     }
 
-    @GetMapping("/certificates/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<String> getCertificateById(@PathVariable long id){
         log.info("> > > { Get Request | Get Gift Certificate By Id }");
         return ResponseEntity.ok(gson.toJson(giftCertificateService.getById(id)));
@@ -52,16 +51,32 @@ public class GiftCertificateController {
         return ResponseEntity.ok(gson.toJson(byTag));
     }
 
-
-    @PostMapping("/certificates")
+    @PostMapping
     public ResponseEntity<String> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result){
-        log.info("> > > {Post Request | Create a new GiftCertificate");
+        log.info("> > > { Post Request | Create a new GiftCertificate }");
         if(result.hasErrors()){
             System.out.println("Problems with constraint!");
             log.error("Something went wrong with constraints!");
         }
         giftCertificateService.save(giftCertificateDTO);
         return ResponseEntity.ok("Gift Certificate successfully created!");
+    }
+
+    @PatchMapping
+    public ResponseEntity<String> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result){
+        log.info("> > > {Patch Request | Update an existing GiftCertificate }");
+        if(result.hasErrors()){
+            System.out.println("Problems with constraint!");
+            log.error("Something is wrong!");
+            return ResponseEntity.ok("Could not update GiftCertificate");
+        }
+        giftCertificateService.update(giftCertificateDTO);
+        return ResponseEntity.ok("Successfully updated!");
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable long id){
+        giftCertificateService.delete(id);
+        return ResponseEntity.ok("Successfully deleted!");
     }
 
 }

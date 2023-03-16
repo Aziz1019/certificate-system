@@ -8,7 +8,7 @@ public enum TableQueries {
     GET_GIFT_CERTIFICATES_BY_NAME("select * from gift_certificate where name like ?"),
     GET_GIFT_CERTIFICATES_BY_DESCRIPTION("select * from gift_certificate where description like ?"),
     SAVE_GIFT_CERTIFICATES("insert into gift_certificate (name, description, price, duration) values (?, ?, ?, ?) on conflict do nothing returning id"),
-    UPDATE_GIFT_CERTIFICATES("update gift_certificate set name = coalesce(?, name), description = coalesce(?, description), price = coalesce(?, price), duration = coalesce(?, duration), last_update_date = now() where id = ?"),
+    UPDATE_GIFT_CERTIFICATES("update gift_certificate set name = coalesce(?, name), description = coalesce(?, description), price = coalesce(?, price), duration = coalesce(?, duration) where id = ?"),
     DELETE_GIFT_CERTIFICATE("delete from gift_certificate where id = ?"),
 
     // TAGS GET, SAVE, DELETE TAGS
