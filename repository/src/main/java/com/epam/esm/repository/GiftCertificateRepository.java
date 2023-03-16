@@ -9,5 +9,6 @@ public interface GiftCertificateRepository<T> extends BaseRepository<T> {
     void tagSetter(GiftCertificate giftCertificate);
     void update(T t);
     List<GiftCertificate> getByTag(Tag tag);
+    Long save(T t);
 
 }

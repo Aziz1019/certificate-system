@@ -60,9 +60,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     @Override
     public GiftCertificateDTO getById(long id) throws ResourceNotFoundException {
         log.info("> > > {Get Gift Certificate By ID}");
-
         Optional<GiftCertificate> byId = giftCertificateRepository.getById(id);
-
         return byId.map(certificateMapper::toGiftCertificateDTO).orElseThrow(
                 () -> {
                     String errorMessage = "Resource not found for ID: " + id;
@@ -71,21 +69,21 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                 });
     }
 
+    /////////////////////////////////////////////////////////////////// Should clarify - a lot of stuff ! ! !
     @Override
     public boolean save(GiftCertificateDTO giftCertificateDTO) throws ServiceException {
         log.info("> > > { Add New Gift Certificate }");
         try {
             GiftCertificate giftCertificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
-            boolean save = giftCertificateRepository.save(giftCertificate);
-            giftCertificateDTO.getTags().forEach(tag -> {
-                tagRepository.save(tagMapper.toTag(tag));
-            });
-            giftCertificate.getTags().forEach(tag -> {
-                giftCertificateTagRepository.save(new GiftCertificateTag(
-                        giftCertificate.getId(), tag.getId()));
-            });
+            giftCertificateRepository.save(giftCertificate);
+
+            if (giftCertificateDTO.getTags() != null) {
+                giftCertificateDTO.getTags().forEach(tag -> {
+                    tagRepository.save(tagMapper.toTag(tag));
+                });
+            }
             giftCertificateRepository.tagSetter(giftCertificate);
-            return save;
+            return true;
         } catch (DataAccessException e) {
             log.error("Could not create gift certificate - > {}", e.getMessage());
             throw new ServiceException("Error saving resource", e, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -95,13 +93,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     @Override
     public boolean delete(long id) throws ResourceNotFoundException {
         try {
-
             log.info("{ Deleting Gift Certificate }");
-
             giftCertificateRepository.getById(id);
-
             giftCertificateRepository.delete(id);
-
         } catch (EmptyResultDataAccessException ex) {
             log.error("Cannot find gift certificate by id {}, msg: {}", id, ex.getMessage());
             throw new ResourceNotFoundException("Certificate not found!");
@@ -119,11 +113,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             log.info("> > > { Updating a certificate } < < <");
 
             giftCertificateRepository.getById(id);
-
             GiftCertificate certificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
-
             giftCertificateRepository.update(certificate);
-
             giftCertificateTagRepository.delete(certificate.getId());
 
             giftCertificateDTO.getTags().forEach(tag -> tagRepository.save(tagMapper.toTag(tag)));

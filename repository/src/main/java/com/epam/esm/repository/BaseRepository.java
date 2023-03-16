@@ -6,6 +6,5 @@ import java.util.Optional;
 public interface BaseRepository<T> {
     List<T> getAll();
     Optional<T> getById(long id);
-    boolean save(T t);
     boolean delete(long id);
 }
