@@ -2,7 +2,6 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateDTO;
 import com.epam.esm.dto.TagDTO;
-import com.epam.esm.enums.TableQueries;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.GiftCertificateMapper;
@@ -105,26 +104,35 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         return true;
     }
 
-    // ---------------------------------------------------------------------------------------------------------
     @Override
     public boolean update(GiftCertificateDTO giftCertificateDTO) throws ResourceNotFoundException {
         long id = giftCertificateDTO.getId();
         try {
             log.info("> > > { Updating a certificate } < < <");
-
             giftCertificateRepository.getById(id);
+
+            //  Adding tags to tag table from tags list in CertificateDTO
+            giftCertificateDTO.getTags().forEach(tag -> tag.setId(tagRepository.save(tagMapper.toTag(tag))));
+
             GiftCertificate certificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
+
+            // Updating Certificate and deleting the tag relation
             giftCertificateRepository.update(certificate);
 
             giftCertificateTagRepository.delete(certificate.getId());
 
-            giftCertificateDTO.getTags().forEach(tag -> tagRepository.save(tagMapper.toTag(tag)));
+            giftCertificateDTO.getTags().forEach(System.out::println);
 
+            // Adding tag and certificate details to join table.
             certificate.getTags()
                     .forEach(tag -> {
                         giftCertificateTagRepository.save(new GiftCertificateTag(
                                 certificate.getId(), tag.getId()));
                     });
+
+            System.out.println(certificate.getTags());
+
+            // sets all the tags to certificate
             giftCertificateRepository.tagSetter(certificate);
 
         } catch (EmptyResultDataAccessException ex) {
@@ -137,7 +145,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         return true;
     }
 
-    // ------------------------------------------------------------------------------------------------------
     @Override
     public List<GiftCertificateDTO> getByTag(TagDTO tag) throws ResourceNotFoundException {
         try {
