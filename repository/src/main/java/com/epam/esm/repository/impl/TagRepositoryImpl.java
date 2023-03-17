@@ -43,7 +43,7 @@ public class TagRepositoryImpl implements TagRepository<Tag> {
     @Override
     public boolean delete(long id) {
         log.info("> > > Loading { Deleting Tag By ID } ");
-        int update = jdbcTemplate.update(TableQueries.DELETE_TAG_BY_ID.getQuery(), tagRowMapper, id);
+        int update = jdbcTemplate.update(TableQueries.DELETE_TAG_BY_ID.getQuery(), id);
         return update > 0;
     }
 }
