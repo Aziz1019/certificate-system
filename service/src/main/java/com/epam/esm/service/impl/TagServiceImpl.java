@@ -5,6 +5,7 @@ import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.model.Tag;
+import com.epam.esm.repository.GiftCertificateTagRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,12 @@ import java.util.List;
 @Slf4j
 public class TagServiceImpl implements TagService<TagDTO> {
     private final TagRepository<Tag> tagRepository;
+    private final GiftCertificateTagRepository giftCertificateTagRepository;
     private final TagMapper tagMapper;
 
-    public TagServiceImpl(TagRepository<Tag> tagRepository, TagMapper tagMapper) {
+    public TagServiceImpl(TagRepository<Tag> tagRepository, GiftCertificateTagRepository giftCertificateTagRepository, TagMapper tagMapper) {
         this.tagRepository = tagRepository;
+        this.giftCertificateTagRepository = giftCertificateTagRepository;
         this.tagMapper = tagMapper;
     }
 
@@ -64,7 +67,7 @@ public class TagServiceImpl implements TagService<TagDTO> {
     public boolean delete(long id) throws ResourceNotFoundException, ServiceException {
         log.info("{ Deleting a tag } ");
         try {
-            tagRepository.getById(id);
+            giftCertificateTagRepository.deleteByTagId(id);
             tagRepository.delete(id);
             return true;
         } catch (EmptyResultDataAccessException e) {
