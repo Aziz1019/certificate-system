@@ -105,11 +105,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     }
 
     @Override
-    public boolean update(GiftCertificateDTO giftCertificateDTO) throws ResourceNotFoundException {
+    public void update(GiftCertificateDTO giftCertificateDTO) throws ResourceNotFoundException {
         long id = giftCertificateDTO.getId();
         try {
             log.info("> > > { Updating a certificate } < < <");
-            giftCertificateRepository.getById(id);
 
             //  Adding tags to tag table from tags list in CertificateDTO
             giftCertificateDTO.getTags().forEach(tag -> tag.setId(tagRepository.save(tagMapper.toTag(tag))));
@@ -135,14 +134,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             // sets all the tags to certificate
             giftCertificateRepository.tagSetter(certificate);
 
-        } catch (EmptyResultDataAccessException ex) {
-            log.error("could not get gift certificate by id {}, msg {}", id, ex.getMessage());
-            throw new ResourceNotFoundException("could not get gift certificate, id:");
         } catch (DataAccessException ex) {
             log.error("failed to update certificate with id {}, cause {}", id, ex.getMessage());
             throw new ResourceNotFoundException("could not update certificate ", ex);
         }
-        return true;
     }
 
     @Override
@@ -155,5 +150,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             log.error("could not find gift certificate by tags {}", ex.getMessage());
             throw new ResourceNotFoundException("Gift Certificate was not found!", ex);
         }
+    }
+
+    @Override
+    public List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String description, String sort) {
+        List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, description, sort);
+        return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();
     }
 }

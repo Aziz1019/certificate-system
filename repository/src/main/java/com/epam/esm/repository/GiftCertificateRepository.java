@@ -10,5 +10,5 @@ public interface GiftCertificateRepository<T> extends BaseRepository<T> {
     void update(T t);
     List<GiftCertificate> getByTag(Tag tag);
     Long save(T t);
-
+    List<GiftCertificate> getGiftCertificateWithTags(String name, String description, String sort);
 }

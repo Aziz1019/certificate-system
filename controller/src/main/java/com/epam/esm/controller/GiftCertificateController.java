@@ -79,4 +79,15 @@ public class GiftCertificateController {
         return ResponseEntity.ok("Successfully deleted!");
     }
 
+    @PutMapping
+    public ResponseEntity<String> getGiftCertificatesWithTags(
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam (name = "description", required = false) String description,
+//            @RequestParam(name = "tag", required = false) String tag,
+            @RequestParam(name = "sort", defaultValue = "name_asc") String sort){
+        // Implementation
+        List<GiftCertificateDTO> giftCertificateWithTags = giftCertificateService.getGiftCertificateWithTags(name, description, sort);
+        return ResponseEntity.ok(gson.toJson(giftCertificateWithTags));
+    }
+
 }

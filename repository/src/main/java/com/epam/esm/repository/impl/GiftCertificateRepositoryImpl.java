@@ -8,7 +8,11 @@ import com.epam.esm.model.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +58,29 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
                 giftCertificate.getDescription(),
                 giftCertificate.getPrice(),
                 giftCertificate.getDuration());
+    }
+
+    @Override
+    public List<GiftCertificate> getGiftCertificateWithTags(String name, String description, String sort) {
+
+        String sorted = switch (sort) {
+            case "name_desc" -> "name DESC";
+            case "date_asc" -> "create_date ASC";
+            case "date_desc" -> "create_date DESC";
+            default -> "name ASC";
+        };
+
+        String query = "SELECT DISTINCT gc.* FROM gift_certificate gc " +
+                    "LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id " +
+                    "LEFT JOIN Tag t ON gct.tag_id = t.id " +
+                    "WHERE (:name IS NULL OR gc.name LIKE :name) " +
+                    "AND (:description IS NULL OR gc.description LIKE :description) " +
+                    "ORDER BY " + sorted;
+            SqlParameterSource parameters = new MapSqlParameterSource()
+                    .addValue("name", !StringUtils.hasLength(name) ? null : "%" + name + "%")
+                    .addValue("description", StringUtils.hasLength(description) ? null : "%" + description + "%");
+
+            return jdbcTemplate.query(query, certificateRowMapper, parameters);
     }
 
     @Override
