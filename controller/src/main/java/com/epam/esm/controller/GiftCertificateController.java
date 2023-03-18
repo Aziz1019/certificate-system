@@ -87,6 +87,7 @@ public class GiftCertificateController {
             @RequestParam(name = "sort", defaultValue = "name_asc") String sort){
         // Implementation
         List<GiftCertificateDTO> giftCertificateWithTags = giftCertificateService.getGiftCertificateWithTags(name, description, sort);
+        System.out.println(giftCertificateWithTags);
         return ResponseEntity.ok(gson.toJson(giftCertificateWithTags));
     }
 

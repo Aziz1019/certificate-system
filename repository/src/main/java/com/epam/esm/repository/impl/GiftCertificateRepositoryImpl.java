@@ -62,7 +62,6 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
 
     @Override
     public List<GiftCertificate> getGiftCertificateWithTags(String name, String description, String sort) {
-
         String sorted = switch (sort) {
             case "name_desc" -> "name DESC";
             case "date_asc" -> "create_date ASC";
@@ -70,17 +69,15 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
             default -> "name ASC";
         };
 
-        String query = "SELECT DISTINCT gc.* FROM gift_certificate gc " +
-                    "LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id " +
-                    "LEFT JOIN Tag t ON gct.tag_id = t.id " +
-                    "WHERE (:name IS NULL OR gc.name LIKE :name) " +
-                    "AND (:description IS NULL OR gc.description LIKE :description) " +
-                    "ORDER BY " + sorted;
-            SqlParameterSource parameters = new MapSqlParameterSource()
-                    .addValue("name", !StringUtils.hasLength(name) ? null : "%" + name + "%")
-                    .addValue("description", StringUtils.hasLength(description) ? null : "%" + description + "%");
+        String query = "SELECT DISTINCT gc.*\n" +
+                "FROM gift_certificate gc\n" +
+                "         LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id\n" +
+                "         LEFT JOIN Tag t ON gct.tag_id = t.id\n" +
+                "WHERE (gc.name IS NULL OR gc.name ILIKE '%"+ nullChecker(name) +"%')\n" +
+                "  AND (gc.description IS NULL OR gc.description ILIKE '%" + nullChecker(description) + "%')\n" +
+                "ORDER BY " + sorted;
 
-            return jdbcTemplate.query(query, certificateRowMapper, parameters);
+        return jdbcTemplate.query(query, certificateRowMapper);
     }
 
     @Override
@@ -117,6 +114,10 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
     private void setAllTags(GiftCertificate certificate) {
         certificate.setTags(new TreeSet<>(jdbcTemplate.query(
                 TableQueries.GET_ALL_GIFT_CERTIFICATES_TAGS.getQuery(), tagRowMapper, certificate.getId())));
+    }
+
+    private String nullChecker(String name){
+        return !StringUtils.hasLength(name) ? "" : name;
     }
 
 }
