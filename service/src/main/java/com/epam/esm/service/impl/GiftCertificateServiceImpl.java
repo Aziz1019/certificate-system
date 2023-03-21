@@ -76,18 +76,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             Long certificateId = giftCertificateRepository.save(giftCertificate);
 
             if (giftCertificateDTO.getTags() != null) {
+
                 giftCertificateDTO.getTags().forEach(tag -> {
+
                     tag.setId(tagRepository.save(tagMapper.toTag(tag))
                     );
+
+                    // Adding tag and certificate details to join table.
+                    giftCertificateTagRepository.save(new GiftCertificateTag(
+                            certificateId, tag.getId()));
                 });
-                // Adding tag and certificate details to join table.
-                giftCertificate.getTags()
-                        .forEach(tag -> {
-                            giftCertificateTagRepository.save(new GiftCertificateTag(
-                                    certificateId, tag.getId()));
-                        });
             }
-            giftCertificateRepository.tagSetter(giftCertificate);
+
+            // giftCertificateRepository.tagSetter(certificate);  --> Not important method was used before.
 
             return true;
         } catch (DataAccessException e) {
