@@ -58,6 +58,7 @@ public class GiftCertificateController {
             System.out.println("Problems with constraint!");
             log.error("Something went wrong with constraints!");
         }
+        
         giftCertificateService.save(giftCertificateDTO);
         return ResponseEntity.ok("Gift Certificate successfully created!");
     }

@@ -73,14 +73,22 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         log.info("> > > { Add New Gift Certificate }");
         try {
             GiftCertificate giftCertificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
-            giftCertificateRepository.save(giftCertificate);
+            Long certificateId = giftCertificateRepository.save(giftCertificate);
 
             if (giftCertificateDTO.getTags() != null) {
                 giftCertificateDTO.getTags().forEach(tag -> {
-                    tagRepository.save(tagMapper.toTag(tag));
+                    tag.setId(tagRepository.save(tagMapper.toTag(tag))
+                    );
                 });
+                // Adding tag and certificate details to join table.
+                giftCertificate.getTags()
+                        .forEach(tag -> {
+                            giftCertificateTagRepository.save(new GiftCertificateTag(
+                                    certificateId, tag.getId()));
+                        });
             }
             giftCertificateRepository.tagSetter(giftCertificate);
+
             return true;
         } catch (DataAccessException e) {
             log.error("Could not create gift certificate - > {}", e.getMessage());
