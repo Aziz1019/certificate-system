@@ -74,9 +74,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
                 "FROM gift_certificate gc\n" +
                 "         LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id\n" +
                 "         LEFT JOIN Tag t ON gct.tag_id = t.id\n" +
-                " WHERE (gc.name IS NULL OR gc.name ILIKE '%" + nullChecker(name) + "%')\n" +
-                " AND (gc.description IS NULL OR gc.description ILIKE '%" + nullChecker(description) + "%')\n" +
-                " AND (t.name IS NULL or t.name ILIKE '%" + nullChecker(tagName) + "%')" +
+                " WHERE (gc.name ILIKE '%" + nullChecker(name) + "%')\n" +
+                " AND (gc.description ILIKE '%" + nullChecker(description) + "%')\n" +
+                " AND (t.name ILIKE '%" + nullChecker(tagName) + "%')" +
                 " ORDER BY " + sorted;
 
         return jdbcTemplate.query(query, certificateRowMapper);
