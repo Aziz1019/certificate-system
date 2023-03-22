@@ -101,11 +101,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     public boolean delete(long id) throws ResourceNotFoundException {
         try {
             log.info("{ Deleting Gift Certificate }");
-            giftCertificateRepository.getById(id);
+            giftCertificateTagRepository.delete(id);
+
             giftCertificateRepository.delete(id);
-        } catch (EmptyResultDataAccessException ex) {
-            log.error("Cannot find gift certificate by id {}, msg: {}", id, ex.getMessage());
-            throw new ResourceNotFoundException("Certificate not found!");
+
         } catch (DataAccessException ex) {
             log.error("cannot delete gift certificate by id {}, msg {}", id, ex.getMessage());
             throw new ResourceNotFoundException("Certificate could not be deleted! ", ex);

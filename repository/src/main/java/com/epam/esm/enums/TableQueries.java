@@ -3,7 +3,7 @@ package com.epam.esm.enums;
 public enum TableQueries {
 
     // GiftCertificate Get, Save, Update, Delete
-    GET_ALL_GIFT_CERTIFICATES("select * from gift_certificate"),
+    GET_ALL_GIFT_CERTIFICATES("select * from gift_certificate order by id"),
     GET_GIFT_CERTIFICATES_BY_ID("select * from gift_certificate where id = ?"),
     GET_GIFT_CERTIFICATES_BY_NAME("select * from gift_certificate where name like ?"),
     GET_GIFT_CERTIFICATES_BY_DESCRIPTION("select * from gift_certificate where description like ?"),
