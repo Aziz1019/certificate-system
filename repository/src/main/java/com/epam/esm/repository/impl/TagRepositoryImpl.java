@@ -5,6 +5,7 @@ import com.epam.esm.mapper.TagRowMapper;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -31,13 +32,25 @@ public class TagRepositoryImpl implements TagRepository<Tag> {
     @Override
     public Optional<Tag> getById(long id) {
         log.info("> > > Loading {Getting Tags By ID}");
-        return Optional.ofNullable(jdbcTemplate.queryForObject(TableQueries.GET_TAGS_BY_ID.getQuery(), tagRowMapper, id));
+        try{
+            return Optional.ofNullable(jdbcTemplate.queryForObject(TableQueries.GET_TAGS_BY_ID.getQuery(), tagRowMapper, id));
+        }
+        catch (EmptyResultDataAccessException e){
+            return Optional.empty();
+        }
     }
 
     @Override
     public Long save(Tag tag) {
         log.info("> > > Loading { Saving / Adding Tags }");
         return jdbcTemplate.queryForObject(TableQueries.SAVE_TAG_NAME.getQuery(), Long.class, tag.getName());
+    }
+
+    @Override
+    public Boolean getByName(String name) {
+//        String query = "select id from tag where name = ?";
+//        jdbcTemplate.query();
+        return null;
     }
 
     @Override

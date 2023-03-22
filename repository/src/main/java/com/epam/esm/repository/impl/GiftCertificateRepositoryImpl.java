@@ -120,4 +120,5 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
         return !StringUtils.hasLength(name) ? "" : name;
     }
 
+
 }

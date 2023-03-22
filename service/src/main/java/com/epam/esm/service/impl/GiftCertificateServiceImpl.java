@@ -120,7 +120,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             log.info("> > > { Updating a certificate } < < <");
 
             //  Adding tags to tag table from tags list in CertificateDTO
-            giftCertificateDTO.getTags().forEach(tag -> tag.setId(tagRepository.save(tagMapper.toTag(tag))));
+
+            List<TagDTO> tags = giftCertificateDTO.getTags();
+            for (TagDTO tag : tags) {
+                Optional<Tag> byId = tagRepository.getById(tag.getId());
+                if (byId.isEmpty()) {
+                    tag.setId(tagRepository.save(tagMapper.toTag(tag)));
+                }
+            }
 
             GiftCertificate certificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
 
@@ -128,8 +135,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             giftCertificateRepository.update(certificate);
 
             giftCertificateTagRepository.delete(certificate.getId());
-
-            giftCertificateDTO.getTags().forEach(System.out::println);
 
             // Adding tag and certificate details to join table.
             certificate.getTags()
@@ -142,6 +147,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
 
             // sets all the tags to certificate
             giftCertificateRepository.tagSetter(certificate);
+
 
         } catch (DataAccessException ex) {
             log.error("failed to update certificate with id {}, cause {}", id, ex.getMessage());
