@@ -102,7 +102,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         try {
             log.info("{ Deleting Gift Certificate }");
             giftCertificateTagRepository.delete(id);
-
             giftCertificateRepository.delete(id);
 
         } catch (DataAccessException ex) {
