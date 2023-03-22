@@ -61,7 +61,8 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
     }
 
     @Override
-    public List<GiftCertificate> getGiftCertificateWithTags(String name, String description, String sort) {
+    public List<GiftCertificate> getGiftCertificateWithTags(String name, String tagName, String description, String sort) {
+
         String sorted = switch (sort) {
             case "name_desc" -> "name DESC";
             case "date_asc" -> "create_date ASC";
@@ -73,9 +74,10 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
                 "FROM gift_certificate gc\n" +
                 "         LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id\n" +
                 "         LEFT JOIN Tag t ON gct.tag_id = t.id\n" +
-                "WHERE (gc.name IS NULL OR gc.name ILIKE '%"+ nullChecker(name) +"%')\n" +
-                "  AND (gc.description IS NULL OR gc.description ILIKE '%" + nullChecker(description) + "%')\n" +
-                "ORDER BY " + sorted;
+                " WHERE (gc.name IS NULL OR gc.name ILIKE '%" + nullChecker(name) + "%')\n" +
+                " AND (gc.description IS NULL OR gc.description ILIKE '%" + nullChecker(description) + "%')\n" +
+                " AND (t.name IS NULL or t.name ILIKE '%" + nullChecker(tagName) + "%')" +
+                " ORDER BY " + sorted;
 
         return jdbcTemplate.query(query, certificateRowMapper);
     }
@@ -100,15 +102,6 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
                 giftCertificate.getPrice(),
                 giftCertificate.getDuration(),
                 giftCertificate.getId());
-    }
-
-    @Override
-    public List<GiftCertificate> getByTag(Tag tag) {
-        log.info("Getting Gift Certificates by Tags");
-        List<GiftCertificate> certificates = jdbcTemplate.query(
-                TableQueries.GET_GIFT_CERTIFICATES_BY_TAGS.getQuery(), certificateRowMapper);
-        certificates.forEach(this::setAllTags);
-        return certificates;
     }
 
     private void setAllTags(GiftCertificate certificate) {

@@ -8,7 +8,6 @@ import java.util.List;
 public interface GiftCertificateRepository<T> extends BaseRepository<T> {
     void tagSetter(GiftCertificate giftCertificate);
     void update(T t);
-    List<GiftCertificate> getByTag(Tag tag);
     Long save(T t);
-    List<GiftCertificate> getGiftCertificateWithTags(String name, String description, String sort);
+    List<GiftCertificate> getGiftCertificateWithTags(String name, String tagName, String description, String sort);
 }

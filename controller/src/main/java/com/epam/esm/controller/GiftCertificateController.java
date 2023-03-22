@@ -39,17 +39,6 @@ public class GiftCertificateController {
         return ResponseEntity.ok(gson.toJson(giftCertificateService.getById(id)));
     }
 
-    @PostMapping("/tag")
-    public ResponseEntity<String> getByTag(@RequestBody @Valid TagDTO tagDTO, BindingResult result){
-        log.info("> > > { Post Request | Get Gift Certificate By Tag");
-        if (result.hasErrors()){
-            System.out.println("Problems with constraint");
-            log.error("Something went wrong");
-        }
-        List<GiftCertificateDTO> byTag = giftCertificateService.getByTag(tagDTO);
-        System.out.println(giftCertificateService.getByTag(tagDTO));
-        return ResponseEntity.ok(gson.toJson(byTag));
-    }
 
     @PostMapping
     public ResponseEntity<String> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result){
@@ -58,7 +47,7 @@ public class GiftCertificateController {
             System.out.println("Problems with constraint!");
             log.error("Something went wrong with constraints!");
         }
-        
+
         giftCertificateService.save(giftCertificateDTO);
         return ResponseEntity.ok("Gift Certificate successfully created!");
     }
@@ -84,10 +73,10 @@ public class GiftCertificateController {
     public ResponseEntity<String> getGiftCertificatesWithTags(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam (name = "description", required = false) String description,
-//            @RequestParam(name = "tag", required = false) String tag,
+            @RequestParam(name = "tag", required = false) String tagName,
             @RequestParam(name = "sort", defaultValue = "name_asc") String sort){
         // Implementation
-        List<GiftCertificateDTO> giftCertificateWithTags = giftCertificateService.getGiftCertificateWithTags(name, description, sort);
+        List<GiftCertificateDTO> giftCertificateWithTags = giftCertificateService.getGiftCertificateWithTags(name,tagName,description, sort);
         System.out.println(giftCertificateWithTags);
         return ResponseEntity.ok(gson.toJson(giftCertificateWithTags));
     }

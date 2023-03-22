@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface GiftCertificateService<T> extends BaseService<T>{
     void update(T t) throws ResourceNotFoundException;
-    List<GiftCertificateDTO> getByTag(TagDTO tag) throws ResourceNotFoundException;
-    List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String description, String sort);
+    List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort);
 }
