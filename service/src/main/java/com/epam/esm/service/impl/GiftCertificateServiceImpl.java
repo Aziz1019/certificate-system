@@ -88,8 +88,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                 });
             }
 
-            // giftCertificateRepository.tagSetter(certificate);  --> Not important method was used before.
-
             return true;
         } catch (DataAccessException e) {
             log.error("Could not create gift certificate - > {}", e.getMessage());

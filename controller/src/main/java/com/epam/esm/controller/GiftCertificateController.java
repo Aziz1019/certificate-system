@@ -22,7 +22,6 @@ public class GiftCertificateController {
     }
 
     @GetMapping
-    @ResponseBody
     public ResMessage getCertificates() {
         return new ResMessage(200, "Ok", giftCertificateService.getAll());
     }
