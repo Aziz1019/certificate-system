@@ -1,9 +1,8 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.GiftCertificateDTO;
-import com.epam.esm.dto.TagDTO;
+import com.epam.esm.responseMessage.ResMessage;
 import com.epam.esm.service.GiftCertificateService;
-import com.google.gson.Gson;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,34 +15,29 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api/certificates")
 public class GiftCertificateController {
-    private final Gson gson;
     private final GiftCertificateService<GiftCertificateDTO> giftCertificateService;
 
-    public GiftCertificateController(Gson gson, GiftCertificateService<GiftCertificateDTO> giftCertificateService) {
-        this.gson = gson;
+    public GiftCertificateController(GiftCertificateService<GiftCertificateDTO> giftCertificateService) {
         this.giftCertificateService = giftCertificateService;
-    }
-    @GetMapping("/hello")
-    public String getHello(){
-        return "Hello!";
     }
 
     @GetMapping
-    public ResponseEntity<String> getCertificates(){
-        return ResponseEntity.ok(gson.toJson(giftCertificateService.getAll()));
+    @ResponseBody
+    public ResMessage getCertificates() {
+        return new ResMessage(200, "Ok", giftCertificateService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getCertificateById(@PathVariable long id){
+    public ResMessage getCertificateById(@PathVariable long id) {
         log.info("> > > { Get Request | Get Gift Certificate By Id }");
-        return ResponseEntity.ok(gson.toJson(giftCertificateService.getById(id)));
+        return new ResMessage(200, "Ok", giftCertificateService.getById(id));
     }
 
 
     @PostMapping
-    public ResponseEntity<String> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result){
+    public ResponseEntity<String> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
         log.info("> > > { Post Request | Create a new GiftCertificate }");
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             System.out.println("Problems with constraint!");
             log.error("Something went wrong with constraints!");
         }
@@ -53,31 +47,32 @@ public class GiftCertificateController {
     }
 
     @PatchMapping
-    public ResponseEntity<String> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result){
+    public ResMessage update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
         log.info("> > > {Patch Request | Update an existing GiftCertificate }");
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             System.out.println("Problems with constraint!");
             log.error("Something is wrong!");
-            return ResponseEntity.ok("Could not update GiftCertificate");
+            return new ResMessage(101, "no update");
         }
         giftCertificateService.update(giftCertificateDTO);
-        return ResponseEntity.ok("Successfully updated!");
+        return new ResMessage(200, "Success");
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable long id){
+    public ResMessage deleteById(@PathVariable long id) {
         giftCertificateService.delete(id);
-        return ResponseEntity.ok("Successfully deleted!");
+        return new ResMessage(200, "Success");
     }
 
     @PutMapping
-    public ResponseEntity<String> getGiftCertificatesWithTags(
+    public ResMessage getGiftCertificatesWithTags(
             @RequestParam(name = "name", required = false) String name,
-            @RequestParam (name = "description", required = false) String description,
+            @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "tag", required = false) String tagName,
-            @RequestParam(name = "sort", defaultValue = "name_asc") String sort){
-        List<GiftCertificateDTO> giftCertificateWithTags = giftCertificateService.getGiftCertificateWithTags(name,tagName,description, sort);
-        System.out.println(giftCertificateWithTags);
-        return ResponseEntity.ok(gson.toJson(giftCertificateWithTags));
+            @RequestParam(name = "sort", defaultValue = "name_asc") String sort) {
+        List<GiftCertificateDTO> giftCertificateWithTags = giftCertificateService.getGiftCertificateWithTags(name, tagName, description, sort);
+
+        return new ResMessage(200, "Ok", giftCertificateWithTags);
     }
 
 }
