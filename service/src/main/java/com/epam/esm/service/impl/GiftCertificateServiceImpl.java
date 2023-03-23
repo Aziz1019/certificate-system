@@ -141,8 +141,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                                 certificate.getId(), tag.getId()));
                     });
 
-            System.out.println(certificate.getTags());
-
             // sets all the tags to certificate
             giftCertificateRepository.tagSetter(certificate);
 
@@ -159,7 +157,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
 
         giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
-
+        System.out.println(giftCertificateWithTags);
         return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();
     }
 }

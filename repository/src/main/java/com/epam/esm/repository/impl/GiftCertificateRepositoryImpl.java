@@ -4,13 +4,9 @@ import com.epam.esm.enums.TableQueries;
 import com.epam.esm.mapper.GiftCertificateRowMapper;
 import com.epam.esm.mapper.TagRowMapper;
 import com.epam.esm.model.GiftCertificate;
-import com.epam.esm.model.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -70,16 +66,17 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
             default -> "name ASC";
         };
 
-        String query = "SELECT DISTINCT gc.*\n" +
-                "FROM gift_certificate gc\n" +
-                "         LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id\n" +
-                "         LEFT JOIN Tag t ON gct.tag_id = t.id\n" +
-                " WHERE (gc.name ILIKE '%" + nullChecker(name) + "%')\n" +
-                " AND (gc.description ILIKE '%" + nullChecker(description) + "%')\n" +
+        String query = "SELECT DISTINCT gc.*" +
+                "FROM gift_certificate gc" +
+                "         LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id" +
+                "         LEFT JOIN Tag t ON gct.tag_id = t.id" +
+                " WHERE (gc.name ILIKE '%" + nullChecker(name) + "%')" +
+                " AND (gc.description ILIKE '%" + nullChecker(description) + "%')" +
                 " AND (t.name ILIKE '%" + nullChecker(tagName) + "%')" +
                 " ORDER BY " + sorted;
-
-        return jdbcTemplate.query(query, certificateRowMapper);
+        List<GiftCertificate> query1 = jdbcTemplate.query(query, certificateRowMapper);
+        System.out.println(query1);
+        return query1;
     }
 
     @Override
@@ -96,7 +93,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
     @Override
     public void update(GiftCertificate giftCertificate) {
         log.info("> > > Loading { Updating GiftCertificates By ID } ");
-        int updated = jdbcTemplate.update(TableQueries.UPDATE_GIFT_CERTIFICATES.getQuery(),
+        jdbcTemplate.update(TableQueries.UPDATE_GIFT_CERTIFICATES.getQuery(),
                 giftCertificate.getName(),
                 giftCertificate.getDescription(),
                 giftCertificate.getPrice(),
