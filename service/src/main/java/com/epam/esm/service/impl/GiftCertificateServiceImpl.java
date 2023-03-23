@@ -155,7 +155,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     @Override
     public List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort) {
         List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
-
         giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
         System.out.println(giftCertificateWithTags);
         return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();

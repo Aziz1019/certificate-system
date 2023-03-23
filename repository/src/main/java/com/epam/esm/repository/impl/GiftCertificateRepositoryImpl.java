@@ -66,17 +66,22 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
             default -> "name ASC";
         };
 
-        String query = "SELECT DISTINCT gc.*" +
+        String queryWithTag = "SELECT gc.*" +
                 "FROM gift_certificate gc" +
                 "         LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id" +
                 "         LEFT JOIN Tag t ON gct.tag_id = t.id" +
+                " WHERE (t.name ILIKE '%" + nullChecker(tagName) + "%')" +
+                " ORDER BY " + sorted;
+
+        String queryWithNameOrDescription = "SELECT gc.*" +
+                "FROM gift_certificate gc" +
                 " WHERE (gc.name ILIKE '%" + nullChecker(name) + "%')" +
                 " AND (gc.description ILIKE '%" + nullChecker(description) + "%')" +
-                " AND (t.name ILIKE '%" + nullChecker(tagName) + "%')" +
                 " ORDER BY " + sorted;
-        List<GiftCertificate> query1 = jdbcTemplate.query(query, certificateRowMapper);
-        System.out.println(query1);
-        return query1;
+
+        String query = !StringUtils.hasLength(tagName) ? queryWithNameOrDescription : queryWithTag;
+
+        return jdbcTemplate.query(query, certificateRowMapper);
     }
 
     @Override
@@ -106,7 +111,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
                 TableQueries.GET_ALL_GIFT_CERTIFICATES_TAGS.getQuery(), tagRowMapper, certificate.getId())));
     }
 
-    private String nullChecker(String name){
+    private String nullChecker(String name) {
         return !StringUtils.hasLength(name) ? "" : name;
     }
 
