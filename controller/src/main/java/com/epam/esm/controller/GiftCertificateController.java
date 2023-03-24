@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller class that handles HTTP requests related to Gift Certificate resources.
+ */
 @RestController
 @Slf4j
 @RequestMapping("/api/certificates")
@@ -22,10 +25,23 @@ public class GiftCertificateController {
         this.giftCertificateService = giftCertificateService;
     }
 
+    /**
+     * Retrieves all gift certificates.
+     *
+     * @return a {@link ResMessage} with the list of gift certificates.
+     */
+
     @GetMapping
     public ResMessage<List<GiftCertificateDTO>> getCertificates() {
         return new ResMessage<>(giftCertificateService.getAll());
     }
+
+    /**
+     * Retrieves a gift certificate by id.
+     *
+     * @param id the id of the gift certificate.
+     * @return a {@link ResMessage} with the gift certificate.
+     */
 
     @GetMapping("/{id}")
     public ResMessage<GiftCertificateDTO> getCertificateById(@PathVariable long id) {
@@ -33,7 +49,13 @@ public class GiftCertificateController {
         return new ResMessage<>(giftCertificateService.getById(id));
     }
 
-
+    /**
+     * Creates a new gift certificate.
+     *
+     * @param giftCertificateDTO the gift certificate to be created.
+     * @param result             the result of the binding.
+     * @return a {@link ResMessage} with the status of the operation.
+     */
     @PostMapping
     public ResMessage<Object> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
         log.info("> > > { Post Request | Create a new GiftCertificate }");
@@ -48,6 +70,13 @@ public class GiftCertificateController {
         return new ResMessage<>(HttpStatus.OK, "Success");
     }
 
+    /**
+     * Updates an existing gift certificate.
+     *
+     * @param giftCertificateDTO the gift certificate to be updated.
+     * @param result             the result of the binding.
+     * @return a {@link ResMessage} with the status of the operation.
+     */
     @PatchMapping
     public ResMessage<Object> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
         log.info("> > > { Patch Request | Update an existing GiftCertificate }");
@@ -62,12 +91,22 @@ public class GiftCertificateController {
         return new ResMessage<>(HttpStatus.OK, "Success");
     }
 
+    /**
+     * Deletes a gift certificate by id.
+     *
+     * @param id the id of the gift certificate to be deleted.
+     * @return a {@link ResMessage} with the status of the operation.
+     */
+
     @DeleteMapping("/{id}")
     public ResMessage<Object> deleteById(@PathVariable long id) {
         giftCertificateService.delete(id);
         return new ResMessage<>(HttpStatus.OK, "Success");
     }
 
+    /**
+     * Retrieves a list of gift certificates with the specified name, tag name and/or description.
+     */
     @PutMapping
     public ResMessage<List<GiftCertificateDTO>> getGiftCertificatesWithTags(
             @RequestParam(name = "name", required = false) String name,

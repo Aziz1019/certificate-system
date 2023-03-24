@@ -4,6 +4,10 @@ import com.epam.esm.dto.GiftCertificateDTO;
 import com.epam.esm.model.GiftCertificate;
 import org.mapstruct.Mapper;
 
+/**
+
+ Mapper interface that maps GiftCertificate and GiftCertificateDTO.
+ */
 @Mapper(componentModel = "spring")
 public interface GiftCertificateMapper {
     GiftCertificateDTO toGiftCertificateDTO(GiftCertificate giftCertificate);

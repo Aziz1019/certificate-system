@@ -21,15 +21,6 @@ import static com.epam.esm.enums.TableColumns.*;
 
 @Component
 public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
-    /**
-
-     Maps the current row of the given {@link ResultSet} to an instance of {@link GiftCertificate}.
-     @param rs the {@link ResultSet} to map
-     @param rowNum the number of the current row
-     @return an instance of {@link GiftCertificate} with its fields set based on the current row of the given {@link ResultSet}
-     @throws SQLException if a database access error occurs or if this method is called on a closed {@link ResultSet}
-     */
-
     @Override
     public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
         return GiftCertificate.builder()

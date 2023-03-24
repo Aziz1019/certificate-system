@@ -14,15 +14,6 @@ import java.sql.SQLException;
  */
 @Component
 public class TagRowMapper implements RowMapper<Tag> {
-    /**
-
-     Maps a row of the ResultSet to a Tag object.
-     @param rs the ResultSet to map
-     @param rowNum the number of the current row
-     @return the Tag object created from the current row of the ResultSet
-     @throws SQLException if a database access error occurs
-     */
-
     @Override
     public Tag mapRow(ResultSet rs, int rowNum) throws SQLException {
         return Tag.builder()

@@ -7,6 +7,14 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+
+ The {@code ControllerExceptionHandler} class is a global exception handler that catches exceptions
+ thrown from the controller methods annotated with the {@code @RestController} annotation.
+
+ This class contains methods annotated with the {@code @ExceptionHandler} annotation that handle
+ the different types of exceptions thrown from the controller methods.
+ */
 @Slf4j
 @ControllerAdvice
 public class ControllerExceptionHandler {
