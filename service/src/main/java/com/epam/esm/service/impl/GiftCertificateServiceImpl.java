@@ -41,6 +41,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         this.tagMapper = tagMapper;
     }
 
+    /**
+     Retrieves all gift certificates from the repository and maps them to GiftCertificateDTO objects.
+     @return a list of GiftCertificateDTO objects representing all gift certificates in the repository
+     @throws ResourceNotFoundException if an error occurs while accessing the repository or if no gift certificates are found
+     */
+
     @Override
     public List<GiftCertificateDTO> getAll() throws ResourceNotFoundException {
         try {
@@ -68,7 +74,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     }
 
     @Override
-    public boolean save(GiftCertificateDTO giftCertificateDTO) throws ServiceException {
+    public void save(GiftCertificateDTO giftCertificateDTO) throws ServiceException {
         log.info("> > > { Add New Gift Certificate }");
         try {
             GiftCertificate giftCertificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
@@ -87,7 +93,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                 });
             }
 
-            return true;
         } catch (DataAccessException e) {
             log.error("Could not create gift certificate - > {}", e.getMessage());
             throw new ServiceException("Error saving resource", e, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -95,7 +100,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     }
 
     @Override
-    public boolean delete(long id) throws ResourceNotFoundException {
+    public void delete(long id) throws ResourceNotFoundException {
         try {
             log.info("{ Deleting Gift Certificate }");
             giftCertificateTagRepository.delete(id);
@@ -105,7 +110,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             log.error("cannot delete gift certificate by id {}, msg {}", id, ex.getMessage());
             throw new ResourceNotFoundException("Certificate could not be deleted! ", ex);
         }
-        return true;
     }
 
     @Override
@@ -147,7 +151,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     }
 
     @Override
-    public List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort) throws ResourceNotFoundException {
+    public List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort) throws ServiceException {
        try {
            List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
            giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
@@ -155,7 +159,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
        }
        catch (DataAccessException ex) {
            log.error("failed to filter certificate with params, cause {}", ex.getMessage());
-           throw new ResourceNotFoundException("could not update certificate ", ex);
+           throw new ServiceException("could not update certificate ", ex, HttpStatus.INTERNAL_SERVER_ERROR);
        }
     }
 }

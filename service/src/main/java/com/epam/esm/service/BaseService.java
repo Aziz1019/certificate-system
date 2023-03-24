@@ -8,6 +8,6 @@ import java.util.List;
 public interface BaseService <T>{
     List<T> getAll() throws ResourceNotFoundException;
     T getById(long id) throws ResourceNotFoundException;
-    boolean save(T t) throws ServiceException;
-    boolean delete(long id) throws ResourceNotFoundException;
+    void save(T t) throws ServiceException;
+    void delete(long id) throws ResourceNotFoundException;
 }

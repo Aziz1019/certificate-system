@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -44,7 +45,10 @@ public class TagServiceImpl implements TagService<TagDTO> {
     public TagDTO getById(long id) throws ResourceNotFoundException {
         try {
             log.info("> > > { Get By ID } ");
-            return tagMapper.toTagDTO(tagRepository.getById(id).get());
+            if(tagRepository.getById(id).isPresent()){
+                return tagMapper.toTagDTO(tagRepository.getById(id).get());
+            }
+            else throw new ResourceNotFoundException("Tag not found with id " + id);
         } catch (EmptyResultDataAccessException e) {
             log.error("Could not find tag by ID, msg {}", e.getMessage());
             throw new ResourceNotFoundException("Not Found!");
@@ -52,11 +56,10 @@ public class TagServiceImpl implements TagService<TagDTO> {
     }
 
     @Override
-    public boolean save(TagDTO tagDTO) throws ServiceException {
+    public void save(TagDTO tagDTO) throws ServiceException {
         try {
             log.info("> > > { Saving tag } ");
             tagRepository.save(tagMapper.toTag(tagDTO));
-            return true;
         } catch (DataAccessException e) {
             log.error("Could not save TagDTO file, msg {}", e.getMessage());
             throw new ServiceException("Could not save TagDTO", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -64,12 +67,11 @@ public class TagServiceImpl implements TagService<TagDTO> {
     }
 
     @Override
-    public boolean delete(long id) throws ResourceNotFoundException, ServiceException {
+    public void delete(long id) throws ResourceNotFoundException, ServiceException {
         log.info("{ Deleting a tag } ");
         try {
             giftCertificateTagRepository.deleteByTagId(id);
             tagRepository.delete(id);
-            return true;
         } catch (EmptyResultDataAccessException e) {
             log.error("Not able to find, msg {} {}", id, e.getMessage());
             throw new ResourceNotFoundException("Not Found!");
