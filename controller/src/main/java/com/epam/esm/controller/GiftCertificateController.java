@@ -5,6 +5,7 @@ import com.epam.esm.responseMessage.ResMessage;
 import com.epam.esm.service.GiftCertificateService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -22,56 +23,55 @@ public class GiftCertificateController {
     }
 
     @GetMapping
-    public ResMessage getCertificates() {
-        return new ResMessage(200, "Ok", giftCertificateService.getAll());
+    public ResMessage<List<GiftCertificateDTO>> getCertificates() {
+        return new ResMessage<>(giftCertificateService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResMessage getCertificateById(@PathVariable long id) {
+    public ResMessage<GiftCertificateDTO> getCertificateById(@PathVariable long id) {
         log.info("> > > { Get Request | Get Gift Certificate By Id }");
-        return new ResMessage(200, "Ok", giftCertificateService.getById(id));
+        return new ResMessage<>(giftCertificateService.getById(id));
     }
 
 
     @PostMapping
-    public ResponseEntity<String> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
+    public ResMessage<Object> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
         log.info("> > > { Post Request | Create a new GiftCertificate }");
         if (result.hasErrors()) {
             System.out.println("Problems with constraint!");
             log.error("Something went wrong with constraints!");
+            return new ResMessage<>(HttpStatus.BAD_REQUEST, "could not be created");
         }
-
         giftCertificateService.save(giftCertificateDTO);
-        return ResponseEntity.ok("Gift Certificate successfully created!");
+        return new ResMessage<>(HttpStatus.OK, "Success");
     }
 
     @PatchMapping
-    public ResMessage update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
-        log.info("> > > {Patch Request | Update an existing GiftCertificate }");
+    public ResMessage<Object> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
+        log.info("> > > { Patch Request | Update an existing GiftCertificate }");
         if (result.hasErrors()) {
             System.out.println("Problems with constraint!");
             log.error("Something is wrong!");
-            return new ResMessage(101, "no update");
+            return new ResMessage<>(HttpStatus.NOT_MODIFIED, "no update");
         }
         giftCertificateService.update(giftCertificateDTO);
-        return new ResMessage(200, "Success");
+        return new ResMessage<>(HttpStatus.OK, "Success");
     }
 
     @DeleteMapping("/{id}")
-    public ResMessage deleteById(@PathVariable long id) {
+    public ResMessage<Object> deleteById(@PathVariable long id) {
         giftCertificateService.delete(id);
-        return new ResMessage(200, "Success");
+        return new ResMessage<>(HttpStatus.OK, "Success");
     }
 
     @PutMapping
-    public ResMessage getGiftCertificatesWithTags(
+    public ResMessage<List<GiftCertificateDTO>> getGiftCertificatesWithTags(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "tag", required = false) String tagName,
             @RequestParam(name = "sort", defaultValue = "name_asc") String sort) {
-        List<GiftCertificateDTO> giftCertificateWithTags = giftCertificateService.getGiftCertificateWithTags(name, tagName, description, sort);
 
-        return new ResMessage(200, "Ok", giftCertificateWithTags);
+        return new ResMessage<>(giftCertificateService.getGiftCertificateWithTags(name, tagName, description, sort));
     }
 
 }

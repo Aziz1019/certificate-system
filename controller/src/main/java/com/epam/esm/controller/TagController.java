@@ -5,8 +5,11 @@ import com.epam.esm.responseMessage.ResMessage;
 import com.epam.esm.service.TagService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -19,31 +22,30 @@ public class TagController {
     }
 
     @GetMapping
-    public ResMessage getTags() {
-        return new ResMessage(200, "ok", tagService.getAll());
+    public ResMessage<List<TagDTO>> getTags() {
+        return new ResMessage<>(tagService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResMessage getTagById(@PathVariable long id) {
-        return new ResMessage(200, "ok", tagService.getById(id));
+    public ResMessage<TagDTO> getTagById(@PathVariable long id) {
+        return new ResMessage<>(tagService.getById(id));
     }
 
 
     @PostMapping
-    public ResMessage createTag(@RequestBody @Valid TagDTO tagDTO, BindingResult result) {
+    public ResMessage<Object> createTag(@RequestBody @Valid TagDTO tagDTO, BindingResult result) {
         log.info("Requesting create . . . ");
         if (result.hasErrors()) {
-            System.out.println("problems with constraints");
             log.error("Something wrong");
+            return new ResMessage<>(HttpStatus.BAD_REQUEST, "Could not be created");
         }
         tagService.save(tagDTO);
-        return new ResMessage(200, "Success");
+        return new ResMessage<>(HttpStatus.OK, "Success");
     }
 
     @DeleteMapping("/{id}")
-    public ResMessage deleteTagById(@PathVariable long id) {
+    public ResMessage<Object> deleteTagById(@PathVariable long id) {
         tagService.delete(id);
-        return new ResMessage(200, "Success");
+        return new ResMessage<>(HttpStatus.OK, "Success");
     }
-
 }

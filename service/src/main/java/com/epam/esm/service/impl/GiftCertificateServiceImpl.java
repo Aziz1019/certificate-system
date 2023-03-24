@@ -15,7 +15,6 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,10 +133,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
 
             // Adding tag and certificate details to join table.
             certificate.getTags()
-                    .forEach(tag -> {
-                        giftCertificateTagRepository.save(new GiftCertificateTag(
-                                certificate.getId(), tag.getId()));
-                    });
+                    .forEach(tag -> giftCertificateTagRepository.save(new GiftCertificateTag(
+                            certificate.getId(), tag.getId())));
 
             // sets all the tags to certificate
             giftCertificateRepository.tagSetter(certificate);
@@ -149,12 +146,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         }
     }
 
-
     @Override
-    public List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort) {
-        List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
-        giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
-        System.out.println(giftCertificateWithTags);
-        return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();
+    public List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort) throws ResourceNotFoundException {
+       try {
+           List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
+           giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
+           return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();
+       }
+       catch (DataAccessException ex) {
+           log.error("failed to filter certificate with params, cause {}", ex.getMessage());
+           throw new ResourceNotFoundException("could not update certificate ", ex);
+       }
     }
 }
