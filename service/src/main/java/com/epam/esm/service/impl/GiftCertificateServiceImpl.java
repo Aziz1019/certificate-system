@@ -42,9 +42,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     }
 
     /**
-     Retrieves all gift certificates from the repository and maps them to GiftCertificateDTO objects.
-     @return a list of GiftCertificateDTO objects representing all gift certificates in the repository
-     @throws ResourceNotFoundException if an error occurs while accessing the repository or if no gift certificates are found
+     * Retrieves all gift certificates from the repository and maps them to GiftCertificateDTO objects.
+     *
+     * @return a list of GiftCertificateDTO objects representing all gift certificates in the repository
+     * @throws ResourceNotFoundException if an error occurs while accessing the repository or if no gift certificates are found
      */
 
     @Override
@@ -152,14 +153,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
 
     @Override
     public List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort) throws ServiceException {
-       try {
-           List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
-           giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
-           return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();
-       }
-       catch (DataAccessException ex) {
-           log.error("failed to filter certificate with params, cause {}", ex.getMessage());
-           throw new ServiceException("could not update certificate ", ex, HttpStatus.INTERNAL_SERVER_ERROR);
-       }
+        try {
+            List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
+            giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
+            return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();
+        } catch (DataAccessException ex) {
+            log.error("failed to filter certificate with params, cause {}", ex.getMessage());
+            throw new ServiceException("could not update certificate ", ex, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

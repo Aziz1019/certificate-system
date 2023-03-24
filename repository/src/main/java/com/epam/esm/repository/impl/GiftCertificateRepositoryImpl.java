@@ -6,6 +6,7 @@ import com.epam.esm.mapper.TagRowMapper;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.repository.GiftCertificateRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -38,12 +39,18 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
     @Override
     public Optional<GiftCertificate> getById(long id) {
         log.info("> > > Loading { Get Gift Certificate By ID }");
-        GiftCertificate giftCertificate = jdbcTemplate.queryForObject(TableQueries.GET_GIFT_CERTIFICATES_BY_ID.getQuery(), certificateRowMapper, id);
-        if (giftCertificate == null) {
-            return Optional.empty();
+        GiftCertificate giftCertificate;
+        try {
+            giftCertificate = jdbcTemplate.queryForObject(TableQueries.GET_GIFT_CERTIFICATES_BY_ID.getQuery(), certificateRowMapper, id);
+            if(giftCertificate != null) {
+                setAllTags(giftCertificate);
+                return Optional.of(giftCertificate);
+            }
         }
-        setAllTags(giftCertificate);
-        return Optional.of(giftCertificate);
+        catch (EmptyResultDataAccessException e){
+            log.error(e.getMessage());
+        }
+        return Optional.empty();
     }
 
     @Override

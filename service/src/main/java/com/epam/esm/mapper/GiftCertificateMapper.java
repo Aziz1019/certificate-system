@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface GiftCertificateMapper {
     GiftCertificateDTO toGiftCertificateDTO(GiftCertificate giftCertificate);
+
     GiftCertificate toGiftCertificate(GiftCertificateDTO giftCertificateDTO);
 
 }

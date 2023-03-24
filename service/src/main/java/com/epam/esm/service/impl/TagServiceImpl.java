@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -45,10 +44,9 @@ public class TagServiceImpl implements TagService<TagDTO> {
     public TagDTO getById(long id) throws ResourceNotFoundException {
         try {
             log.info("> > > { Get By ID } ");
-            if(tagRepository.getById(id).isPresent()){
+            if (tagRepository.getById(id).isPresent()) {
                 return tagMapper.toTagDTO(tagRepository.getById(id).get());
-            }
-            else throw new ResourceNotFoundException("Tag not found with id " + id);
+            } else throw new ResourceNotFoundException("Tag not found with id " + id);
         } catch (EmptyResultDataAccessException e) {
             log.error("Could not find tag by ID, msg {}", e.getMessage());
             throw new ResourceNotFoundException("Not Found!");

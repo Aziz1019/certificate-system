@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -36,8 +37,11 @@ public class TagController {
     public ResMessage<Object> createTag(@RequestBody @Valid TagDTO tagDTO, BindingResult result) {
         log.info("Requesting create . . . ");
         if (result.hasErrors()) {
-            log.error("Something wrong");
-            return new ResMessage<>(HttpStatus.BAD_REQUEST, "Could not be created");
+            log.error("Something went wrong, check validation");
+            List<String> violations = new ArrayList<>();
+            result.getFieldErrors().forEach(fieldError
+                    -> violations.add(fieldError.getDefaultMessage()));
+            return new ResMessage<>(HttpStatus.BAD_REQUEST, "Could not be created", violations);
         }
         tagService.save(tagDTO);
         return new ResMessage<>(HttpStatus.OK, "Success");

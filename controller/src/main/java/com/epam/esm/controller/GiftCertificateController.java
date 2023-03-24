@@ -6,10 +6,10 @@ import com.epam.esm.service.GiftCertificateService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -38,9 +38,11 @@ public class GiftCertificateController {
     public ResMessage<Object> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
         log.info("> > > { Post Request | Create a new GiftCertificate }");
         if (result.hasErrors()) {
-            System.out.println("Problems with constraint!");
-            log.error("Something went wrong with constraints!");
-            return new ResMessage<>(HttpStatus.BAD_REQUEST, "could not be created");
+            log.error("Something went wrong, check validation");
+            List<String> violations = new ArrayList<>();
+            result.getFieldErrors().forEach(fieldError
+                    -> violations.add(fieldError.getDefaultMessage()));
+            return new ResMessage<>(HttpStatus.BAD_REQUEST, "Could not create", violations);
         }
         giftCertificateService.save(giftCertificateDTO);
         return new ResMessage<>(HttpStatus.OK, "Success");
@@ -50,9 +52,11 @@ public class GiftCertificateController {
     public ResMessage<Object> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
         log.info("> > > { Patch Request | Update an existing GiftCertificate }");
         if (result.hasErrors()) {
-            System.out.println("Problems with constraint!");
-            log.error("Something is wrong!");
-            return new ResMessage<>(HttpStatus.NOT_MODIFIED, "no update");
+            log.error("Something went wrong, check validation");
+            List<String> violations = new ArrayList<>();
+            result.getFieldErrors().forEach(fieldError
+                    -> violations.add(fieldError.getDefaultMessage()));
+            return new ResMessage<>(HttpStatus.NOT_MODIFIED, "Could not update", violations);
         }
         giftCertificateService.update(giftCertificateDTO);
         return new ResMessage<>(HttpStatus.OK, "Success");

@@ -46,7 +46,7 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
     }
 
     @Override
-    public boolean deleteByTagId(long id){
-        return jdbcTemplate.update(TableQueries.DELETE_JOIN_TABLE_WITH_TAG_ID.getQuery(), id) > 0;
+    public void deleteByTagId(long id) {
+        jdbcTemplate.update(TableQueries.DELETE_JOIN_TABLE_WITH_TAG_ID.getQuery(), id);
     }
 }

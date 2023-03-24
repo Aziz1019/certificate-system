@@ -1,6 +1,5 @@
 package com.epam.esm.mapper;
 
-import com.epam.esm.enums.TableColumns;
 import com.epam.esm.model.GiftCertificateTag;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
