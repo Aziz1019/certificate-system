@@ -1,5 +1,8 @@
 package com.epam.esm.enums;
+/**
 
+ Enum class that defines the column names for the tables in the database.
+ */
 public enum TableColumns {
     TAG_TABLE_ID("id"),
     TAG_TABLE_NAME("name"),
