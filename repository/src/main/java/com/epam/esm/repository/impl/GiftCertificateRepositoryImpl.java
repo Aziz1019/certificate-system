@@ -113,12 +113,12 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<
                 giftCertificate.getId());
     }
 
-    private void setAllTags(GiftCertificate certificate) {
+    public void setAllTags(GiftCertificate certificate) {
         certificate.setTags(new TreeSet<>(jdbcTemplate.query(
                 TableQueries.GET_ALL_GIFT_CERTIFICATES_TAGS.getQuery(), tagRowMapper, certificate.getId())));
     }
 
-    private String nullChecker(String name) {
+    public String nullChecker(String name) {
         return !StringUtils.hasLength(name) ? "" : name;
     }
 
