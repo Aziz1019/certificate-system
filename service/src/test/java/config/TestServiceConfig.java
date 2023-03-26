@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class TestServiceConfiguration {
+public class TestServiceConfig {
     @Bean
     public GiftCertificateMapper certificateMapper() {
         return Mappers.getMapper(GiftCertificateMapper.class);
