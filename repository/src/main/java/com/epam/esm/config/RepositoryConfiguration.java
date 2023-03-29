@@ -29,10 +29,10 @@ public class RepositoryConfiguration {
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setInitialSize(10);
-        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setDriverClassName(System.getProperty("db.driver"));
         dataSource.setUrl("jdbc:postgresql://localhost:5432/gift_certificate");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("root123");
+        dataSource.setUsername(System.getProperty("db.username"));
+        dataSource.setPassword(System.getProperty("db.password"));
         return dataSource;
     }
     /**

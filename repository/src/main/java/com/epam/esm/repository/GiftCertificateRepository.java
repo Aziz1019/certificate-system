@@ -8,7 +8,9 @@ import java.util.List;
  An interface for managing Gift Certificate objects in a database.
  Extends the {@link BaseRepository} interface.
  @param <T> a type parameter representing the Gift Certificate class or its subclass
+
  */
+//public interface GiftCertificateRepository extends BaseRepository<GiftCertificate> {
 public interface GiftCertificateRepository<T> extends BaseRepository<T> {
     /**
      Sets tags for a given GiftCertificate object.

@@ -1,3 +1,5 @@
+package service;
+
 import com.epam.esm.dto.GiftCertificateDTO;
 import com.epam.esm.dto.TagDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
@@ -16,7 +18,6 @@ import com.epam.esm.repository.impl.TagRepositoryImpl;
 import com.epam.esm.service.GiftCertificateService;
 
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
-import config.TestServiceConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.mock;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TestServiceConfig.class})
+//@ContextConfiguration(classes = {TestServiceConfig.class})
 public class GiftCertificateServiceTest {
     @Mock
     private TagRepository<Tag> tagRepository;
