@@ -22,6 +22,11 @@ public class GiftCertificate {
     private String lastUpdateDate;
     private Set<Tag> tags;
 
-
+    public GiftCertificate(String name, String description, Double price, Long duration) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+    }
 }
 

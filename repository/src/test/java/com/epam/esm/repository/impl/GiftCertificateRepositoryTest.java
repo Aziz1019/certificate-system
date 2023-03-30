@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TestRepositoryConfig.class})
@@ -19,8 +21,52 @@ public class GiftCertificateRepositoryTest {
     private GiftCertificateRepository giftCertificateRepository;
 
     @Test
-    public void theSizeOfGiftCertificateRepoShouldEqualFour() {
+    public void ShouldGetAllSizeEqualFour() {
         assertEquals(4, giftCertificateRepository.getAll().size());
+    }
+
+    @Test
+    public void GetByIdShouldEqualEmptyWhenNonExistingIdIsProvided(){
+        Optional<GiftCertificate> byId = giftCertificateRepository.getById(5);
+        Optional<GiftCertificate> expected = Optional.empty();
+        assertEquals(expected,byId);
+    }
+
+    @Test
+    public void ShouldEqualToExpectedGiftCertificateWhenCalledByCorrectId(){
+        GiftCertificate expected = new GiftCertificate(
+                "name",
+                "description",
+                0.0,
+                0L
+        );
+
+        Optional<GiftCertificate> byId = giftCertificateRepository.getById(6);
+        if(byId.isPresent()){
+            GiftCertificate certificate = byId.get();
+            assertEquals(expected.getName(), certificate.getName());
+            assertEquals(expected.getDescription(), certificate.getDescription());
+            assertEquals(expected.getPrice(), certificate.getPrice());
+            assertEquals(expected.getDuration(), certificate.getDuration());
+        }
+        else {
+            assertEquals(Optional.empty(), byId);
+        }
+    }
+
+    @Test
+    public void DeleteExistingIdWhenDeleteIsCalled(){
+
+        // Asserts true if the data exists
+        Optional<GiftCertificate> existingCertificate = giftCertificateRepository.getById(1);
+        assertTrue(existingCertificate.isPresent());
+
+        // Deleting data by id
+        giftCertificateRepository.delete(1);
+        Optional<GiftCertificate> deletedCertificate = giftCertificateRepository.getById(1);
+
+        // Asserts false if data does not exist
+        assertFalse(deletedCertificate.isPresent());
     }
 
 
