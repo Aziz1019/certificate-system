@@ -27,13 +27,13 @@ import java.util.stream.Collectors;
 @Transactional
 @Slf4j
 public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificateDTO> {
-    private final GiftCertificateRepository<GiftCertificate> giftCertificateRepository;
-    private final TagRepository<Tag> tagRepository;
+    private final GiftCertificateRepository giftCertificateRepository;
+    private final TagRepository tagRepository;
     private final GiftCertificateTagRepository giftCertificateTagRepository;
     protected final GiftCertificateMapper certificateMapper;
     protected final TagMapper tagMapper;
 
-    public GiftCertificateServiceImpl(GiftCertificateRepository<GiftCertificate> giftCertificateRepository, TagRepository<Tag> tagRepository, GiftCertificateTagRepository giftCertificateTagRepository, GiftCertificateMapper certificateMapper, TagMapper tagMapper) {
+    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, TagRepository tagRepository, GiftCertificateTagRepository giftCertificateTagRepository, GiftCertificateMapper certificateMapper, TagMapper tagMapper) {
         this.giftCertificateRepository = giftCertificateRepository;
         this.tagRepository = tagRepository;
         this.giftCertificateTagRepository = giftCertificateTagRepository;

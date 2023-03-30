@@ -19,11 +19,11 @@ import java.util.List;
 @Service
 @Slf4j
 public class TagServiceImpl implements TagService<TagDTO> {
-    private final TagRepository<Tag> tagRepository;
+    private final TagRepository tagRepository;
     private final GiftCertificateTagRepository giftCertificateTagRepository;
     private final TagMapper tagMapper;
 
-    public TagServiceImpl(TagRepository<Tag> tagRepository, GiftCertificateTagRepository giftCertificateTagRepository, TagMapper tagMapper) {
+    public TagServiceImpl(TagRepository tagRepository, GiftCertificateTagRepository giftCertificateTagRepository, TagMapper tagMapper) {
         this.tagRepository = tagRepository;
         this.giftCertificateTagRepository = giftCertificateTagRepository;
         this.tagMapper = tagMapper;

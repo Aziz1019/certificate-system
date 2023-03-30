@@ -17,7 +17,7 @@ import java.util.TreeSet;
 
 @Slf4j
 @Repository
-public class GiftCertificateRepositoryImpl implements GiftCertificateRepository<GiftCertificate> {
+public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
     private final JdbcTemplate jdbcTemplate;
     private final TagRowMapper tagRowMapper;
     private final GiftCertificateRowMapper certificateRowMapper;

@@ -19,7 +19,7 @@ CREATE TABLE tag (
                      name VARCHAR(255) UNIQUE NOT NULL
 );
 
-CREATE TABLE certificate_tag (
+CREATE TABLE gift_certificate_tag (
                                  certificate_id INT NOT NULL,
                                  tag_id INT NOT NULL,
                                  PRIMARY KEY (certificate_id, tag_id),
@@ -37,7 +37,7 @@ INSERT INTO tag (name) VALUES ('name1');
 INSERT INTO tag (name) VALUES ('name2');
 INSERT INTO tag (name) VALUES ('name3');
 
-INSERT INTO certificate_tag (certificate_id, tag_id) VALUES (1, 1);
-INSERT INTO certificate_tag (certificate_id, tag_id) VALUES (2, 2);
-INSERT INTO certificate_tag (certificate_id, tag_id) VALUES (3, 3);
-INSERT INTO certificate_tag (certificate_id, tag_id) VALUES (4, 4);
+INSERT INTO gift_certificate_tag (certificate_id, tag_id) VALUES (1, 1);
+INSERT INTO gift_certificate_tag (certificate_id, tag_id) VALUES (2, 2);
+INSERT INTO gift_certificate_tag (certificate_id, tag_id) VALUES (3, 3);
+INSERT INTO gift_certificate_tag (certificate_id, tag_id) VALUES (4, 4);

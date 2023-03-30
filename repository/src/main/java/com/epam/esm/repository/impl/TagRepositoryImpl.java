@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Slf4j
 @Repository
-public class TagRepositoryImpl implements TagRepository<Tag> {
+public class TagRepositoryImpl implements TagRepository {
     private final JdbcTemplate jdbcTemplate;
     private final TagRowMapper tagRowMapper;
 

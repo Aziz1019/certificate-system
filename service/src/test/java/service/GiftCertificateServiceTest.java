@@ -42,9 +42,9 @@ import static org.mockito.Mockito.mock;
 //@ContextConfiguration(classes = {TestServiceConfig.class})
 public class GiftCertificateServiceTest {
     @Mock
-    private TagRepository<Tag> tagRepository;
+    private TagRepository tagRepository;
     @Mock
-    private GiftCertificateRepository<GiftCertificate> certificateRepository;
+    private GiftCertificateRepository certificateRepository;
     @Mock
     private GiftCertificateMapper certificateMapper;
     @Mock

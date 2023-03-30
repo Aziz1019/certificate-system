@@ -16,12 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GiftCertificateRepositoryTest {
 
     @Autowired
-    private GiftCertificateRepository<GiftCertificate> giftCertificateRepository;
+    private GiftCertificateRepository giftCertificateRepository;
 
     @Test
     public void theSizeOfGiftCertificateRepoShouldEqualFour() {
         assertEquals(4, giftCertificateRepository.getAll().size());
     }
+
 
 
 }

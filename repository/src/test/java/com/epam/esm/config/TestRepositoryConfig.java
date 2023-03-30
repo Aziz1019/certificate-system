@@ -16,6 +16,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
@@ -24,13 +28,21 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan(lazyInit = true)
 public class TestRepositoryConfig {
-
     @Bean
     public DataSource dataSource() {
-        JdbcDataSource dataSource = new JdbcDataSource();
-        dataSource.setURL("jdbc:h2:mem:test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH");
-        dataSource.setUser("postgres");
-        dataSource.setPassword("root123");
+        // An embedded H2 database instance
+        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
+        EmbeddedDatabase db = builder.setType(EmbeddedDatabaseType.H2)
+                .addScript("classpath:data.sql")
+                .build();
+
+        // A Spring DataSource that wraps the H2 database instance
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:h2:mem:testdb;MODE=PostgreSQL");
+        dataSource.setUsername("sa");
+        dataSource.setPassword("");
+        dataSource.setSchema("PUBLIC");
         return dataSource;
     }
 
@@ -38,45 +50,5 @@ public class TestRepositoryConfig {
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
     }
-
-    @Bean
-    public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("data.sql"));
-
-        DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
-        initializer.setDatabasePopulator(populator);
-
-        return initializer;
-    }
-//
-//    @Bean
-//    public GiftCertificateRowMapper giftCertificateRowMapper() {
-//        return new GiftCertificateRowMapper();
-//    }
-//
-//    @Bean
-//    public TagRowMapper tagRowMapper() {
-//        return new TagRowMapper();
-//    }
-//
-//    @Bean
-//    public TagRepository<Tag> tagRepository(JdbcTemplate jdbcTemplate,
-//                                            TagRowMapper tagRowMapper) {
-//        return new TagRepositoryImpl(
-//                jdbcTemplate,
-//                tagRowMapper);
-//    }
-//
-//    @Bean
-//    public GiftCertificateRepository<GiftCertificate> certificateRepository(JdbcTemplate jdbcTemplate,
-//                                                                            TagRowMapper tagRowMapper,
-//                                                                            GiftCertificateRowMapper certificateRowMapper) {
-//        return new GiftCertificateRepositoryImpl(
-//                jdbcTemplate,
-//                tagRowMapper,
-//                certificateRowMapper);
-//    }
 
 }
