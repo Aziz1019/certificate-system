@@ -49,6 +49,7 @@ public enum TableQueries {
     DELETE_TAG_BY_ID("delete from tag where id = ?"),
 
     /**
+
      SQL statements for retrieving, inserting and deleting join table entries (gift_certificate_tag)
      that link gift certificates to tags in the database.
      */
