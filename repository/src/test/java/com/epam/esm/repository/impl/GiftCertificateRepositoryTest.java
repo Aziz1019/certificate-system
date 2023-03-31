@@ -21,36 +21,40 @@ public class GiftCertificateRepositoryTest {
     private GiftCertificateRepository giftCertificateRepository;
 
     @Test
-    public void ShouldGetAllSizeEqualFour() {
+    public void ShouldCheckGetAllSizeEqualFour() {
+        // Checking the size of the all gift-certificates
         assertEquals(4, giftCertificateRepository.getAll().size());
     }
 
     @Test
     public void GetByIdShouldEqualEmptyWhenNonExistingIdIsProvided() {
-        Optional<GiftCertificate> byId = giftCertificateRepository.getById(5);
+        // Calling empty id and checking whether it will return Optional.empty
+        Optional<GiftCertificate> actual = giftCertificateRepository.getById(5);
         Optional<GiftCertificate> expected = Optional.empty();
-        assertEquals(expected, byId);
+        assertEquals(expected, actual);
     }
 
     @Test
     public void ShouldEqualToExpectedGiftCertificateWhenCalledByCorrectId() {
-        GiftCertificate expected = new GiftCertificate(
+        // Expected certificate
+        GiftCertificate expectedCertificate = new GiftCertificate(
                 "name",
                 "description",
                 0.0,
                 0L
         );
+        // Calling get by id for the actualCertificate
+        Optional<GiftCertificate> actualCertificate = giftCertificateRepository.getById(1);
 
-        Optional<GiftCertificate> byId = giftCertificateRepository.getById(6);
-        if (byId.isPresent()) {
-            GiftCertificate certificate = byId.get();
-            assertEquals(expected.getName(), certificate.getName());
-            assertEquals(expected.getDescription(), certificate.getDescription());
-            assertEquals(expected.getPrice(), certificate.getPrice());
-            assertEquals(expected.getDuration(), certificate.getDuration());
-        } else {
-            assertEquals(Optional.empty(), byId);
+        if (actualCertificate.isPresent()) {
+            GiftCertificate certificate = actualCertificate.get();
+            // Checking expecting and actual certificate called by getById
+            assertEquals(expectedCertificate.getName(), certificate.getName());
+            assertEquals(expectedCertificate.getDescription(), certificate.getDescription());
+            assertEquals(expectedCertificate.getPrice(), certificate.getPrice());
+            assertEquals(expectedCertificate.getDuration(), certificate.getDuration());
         }
+
     }
 
     @Test

@@ -21,12 +21,12 @@ class TagRepositoryImplTest {
     private TagRepository tagRepository;
 
     @Test
-    void bGetAll() {
+    void ShouldCheckAllSizeOfTagsAvailable() {
         assertEquals(4, tagRepository.getAll().size());
     }
 
     @Test
-    void getById() {
+    void ShouldCheckForEmptyAndExistingId() {
         Optional<Tag> optionalTag = tagRepository.getById(2);
         assertTrue(optionalTag.isPresent());
 
@@ -36,7 +36,7 @@ class TagRepositoryImplTest {
 
 
     @Test
-    void testDelete() {
+    void ShouldCheckForDeletingExistingTag() {
         Optional<Tag> beforeDelete = tagRepository.getById(1);
         tagRepository.delete(1);
         Optional<Tag> afterDelete = tagRepository.getById(1);
