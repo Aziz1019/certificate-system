@@ -15,6 +15,7 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                 () -> {
                     String errorMessage = "Resource not found for ID: " + id;
                     log.error(errorMessage);
-                    return new ResourceNotFoundException(errorMessage);
+                    throw new ResourceNotFoundException(errorMessage);
                 });
     }
 
@@ -104,10 +105,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     public void delete(long id) throws ResourceNotFoundException {
         try {
             log.info("{ Deleting Gift Certificate }");
+            giftCertificateRepository.getById(id);
             giftCertificateTagRepository.delete(id);
             giftCertificateRepository.delete(id);
 
-        } catch (DataAccessException ex) {
+        } catch (EmptyResultDataAccessException ex) {
             log.error("cannot delete gift certificate by id {}, msg {}", id, ex.getMessage());
             throw new ResourceNotFoundException("Certificate could not be deleted! ", ex);
         }
@@ -145,7 +147,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             giftCertificateRepository.tagSetter(certificate);
 
 
-        } catch (DataAccessException ex) {
+        } catch (EmptyResultDataAccessException ex) {
             log.error("failed to update certificate with id {}, cause {}", id, ex.getMessage());
             throw new ResourceNotFoundException("could not update certificate ", ex);
         }
