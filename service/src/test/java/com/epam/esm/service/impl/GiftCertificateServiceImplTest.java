@@ -2,6 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.model.GiftCertificate;
@@ -54,8 +55,9 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    public void shouldThrowResourceNotFoundExceptionWhenGetAllMethodIsCalled(){
-        doThrow(new DataAccessException("") {}).when(repository).getAll();
+    public void shouldThrowResourceNotFoundExceptionWhenGetAllMethodIsCalled() {
+        doThrow(new DataAccessException("") {
+        }).when(repository).getAll();
         assertThrows(ResourceNotFoundException.class, () -> certificateService.getAll());
     }
 
@@ -76,6 +78,12 @@ class GiftCertificateServiceImplTest {
 
 
     @Test
+    public void shouldThrowResourceNotFoundExceptionWhenGetByIdIsCalled() {
+        doThrow(ResourceNotFoundException.class).when(repository).getById(1L);
+        assertThrows(ResourceNotFoundException.class, () -> certificateService.getById(1L));
+    }
+
+    @Test
     public void shouldGetCertificateByIdWhenMethodIsCalled() throws ResourceNotFoundException {
         long id = 1L;
 
@@ -93,7 +101,26 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void save() {
+    public void shouldThrowServiceExceptionWhenSaveIsCalled(){
+        GiftCertificate certificate = new GiftCertificate();
+        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
+
+        when(certificateMapper.toGiftCertificateDTO(certificate)).thenReturn(giftCertificateDTO);
+
+        doThrow(new DataAccessException(""){}).when(repository).save(certificate);
+        assertThrows(ServiceException.class, () -> certificateService.save(giftCertificateDTO));
+
+    }
+
+    @Test
+    public void shouldSaveNewGiftCertificate() {
+        GiftCertificate certificate = new GiftCertificate();
+        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
+
+        when(certificateMapper.toGiftCertificate(giftCertificateDTO)).thenReturn(certificate);
+        when(repository.save(certificate)).thenReturn(1L);
+
+        assertDoesNotThrow(() -> certificateService.save(giftCertificateDTO));
     }
 
     @Test
@@ -102,7 +129,7 @@ class GiftCertificateServiceImplTest {
 
 
     @Test
-    public void deleteCertificateById_ShouldThrowResourceNotFoundException() throws ResourceNotFoundException {
+    public void deleteCertificateByIdShouldThrowResourceNotFoundException() throws ResourceNotFoundException {
 
         long certificateId = 1L;
         doThrow(EmptyResultDataAccessException.class).when(repository).getById(certificateId);
@@ -110,7 +137,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    public void shouldDeleteCertificateById_WhenResourceNotFoundExceptionWasNotThrown() {
+    public void shouldDeleteCertificateById() {
 
         GiftCertificate certificate = new GiftCertificate();
         certificate.setId(1L);
