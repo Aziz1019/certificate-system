@@ -43,10 +43,12 @@ class TagServiceImplTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenGetAllTagsIsCalled(){
-        doThrow(new DataAccessException("") {}).when(tagRepository).getAll();
+    public void shouldThrowExceptionWhenGetAllTagsIsCalled() {
+        doThrow(new DataAccessException("") {
+        }).when(tagRepository).getAll();
         assertThrows(ResourceNotFoundException.class, () -> tagService.getAll());
     }
+
     @Test
     public void shouldGetAllTagsWithNoExceptions() {
         List<Tag> mockList = new ArrayList<>();
@@ -67,19 +69,20 @@ class TagServiceImplTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenGetByIdTagIsCalled(){
+    public void shouldThrowExceptionWhenGetByIdTagIsCalled() {
         long id = 1L;
         doThrow(new EmptyResultDataAccessException(1)).when(tagRepository).getById(id);
         assertThrows(ResourceNotFoundException.class, () -> tagService.getById(id));
     }
 
     @Test
-    public void shouldThrowExceptionWhenTagIdIsNotFound(){
+    public void shouldThrowExceptionWhenTagIdIsNotFound() {
         long id = 1L;
         when(tagRepository.getById(1L)).thenReturn(Optional.empty());
         doThrow(ResourceNotFoundException.class).when(tagRepository).getById(id);
         assertThrows(ResourceNotFoundException.class, () -> tagService.getById(id));
     }
+
     @Test
     public void shouldGetByIdTagWithNoException() {
         long id = 1L;
@@ -95,15 +98,13 @@ class TagServiceImplTest {
 
     }
 
-//    @Test
-//    public void shouldThrowExceptionWhenSaveTagCalled(){
-//        var tag = new Tag();
-//        var tagDTO = new TagDTO();
-//
-//        when(tagMapper.toTagDTO(tag)).thenReturn(tagDTO);
-//        doThrow(new DataAccessException(""){}).when(tagRepository).save(tag);
-//        assertThrows(ServiceException.class, () -> tagService.save(tagDTO));
-//    }
+    @Test
+    public void shouldThrowExceptionWhenSaveTagCalled() {
+        doThrow(new DataAccessException("") {
+        }).when(tagRepository).save(null);
+        assertThrows(ServiceException.class, () -> tagService.save(null));
+    }
+
     @Test
     public void shouldSaveTagWithNoException() {
         var tag = new Tag();
@@ -117,17 +118,18 @@ class TagServiceImplTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenDeleteTagIdIsNotFound(){
+    public void shouldThrowExceptionWhenDeleteTagIdIsNotFound() {
         long id = 1L;
         doThrow(new EmptyResultDataAccessException(1)).when(tagRepository).delete(id);
-        assertThrows(ResourceNotFoundException.class, ()-> tagService.delete(id));
+        assertThrows(ResourceNotFoundException.class, () -> tagService.delete(id));
     }
 
     @Test
-    public void shouldThrowExceptionWhenDeleteTagIsCalled(){
+    public void shouldThrowExceptionWhenDeleteTagIsCalled() {
         long id = 1L;
-        doThrow(new DataAccessException("") {}).when(tagRepository).delete(id);
-        assertThrows(ServiceException.class, ()-> tagService.delete(id));
+        doThrow(new DataAccessException("") {
+        }).when(tagRepository).delete(id);
+        assertThrows(ServiceException.class, () -> tagService.delete(id));
     }
 
     @Test

@@ -79,6 +79,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void save(GiftCertificateDTO giftCertificateDTO) throws ServiceException {
         log.info("> > > { Add New Gift Certificate }");
         try {
+
             GiftCertificate giftCertificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
             Long certificateId = giftCertificateRepository.save(giftCertificate);
 
@@ -95,7 +96,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 });
             }
 
-        } catch (Exception e) {
+        } catch (EmptyResultDataAccessException e) {
             log.error("Could not create gift certificate - > {}", e.getMessage());
             throw new ServiceException("Error saving resource", e);
         }

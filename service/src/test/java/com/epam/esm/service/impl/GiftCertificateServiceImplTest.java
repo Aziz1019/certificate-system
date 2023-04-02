@@ -1,15 +1,18 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateDTO;
+import com.epam.esm.dto.TagDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.model.GiftCertificate;
+import com.epam.esm.model.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.GiftCertificateTagRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +45,9 @@ class GiftCertificateServiceImplTest {
     private TagRepository tagRepository;
 
     @Mock
+    TagService tagService;
+
+    @Mock
     private TagMapper tagMapper;
 
     @Mock
@@ -52,6 +58,7 @@ class GiftCertificateServiceImplTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         certificateService = new GiftCertificateServiceImpl(repository, tagRepository, giftCertificateTagRepository, certificateMapper, tagMapper);
+        tagService = new TagServiceImpl(tagRepository,giftCertificateTagRepository,tagMapper);
     }
 
     @Test
@@ -96,33 +103,32 @@ class GiftCertificateServiceImplTest {
 
         when(repository.getById(id)).thenReturn(Optional.of(giftCertificate));
         when(certificateMapper.toGiftCertificateDTO(giftCertificate)).thenReturn(expected);
-
         var actual = certificateService.getById(id);
 
         assertEquals(expected, actual);
-
         assertDoesNotThrow(() -> certificateService.getById(id));
     }
 
-//    @Test
-//    public void shouldThrowServiceExceptionWhenSaveIsCalled(){
-//        GiftCertificate certificate = new GiftCertificate(0L, "Gift Certificate 1", "Description 1", 19.20, 30L, "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new HashSet<>());
-//        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO(0L, "Gift Certificate 1", "Description 1", "19.20", "30", "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new ArrayList<>());
-//        when(certificateMapper.toGiftCertificateDTO(certificate)).thenReturn(giftCertificateDTO);
-//        doThrow(new DataAccessException(""){}).when(repository).save(certificate);
-//        assertThrows(ServiceException.class, () -> certificateService.save(giftCertificateDTO));
-//    }
 
     @Test
-    public void shouldSaveNewGiftCertificateWithNoExceptions() {
-        GiftCertificate certificate = new GiftCertificate();
-        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
+    public void shouldThrowServiceExceptionWhenSaveIsCalled() {
+        doThrow(new EmptyResultDataAccessException(1)).when(repository).save(null);
+        assertThrows(ServiceException.class, () -> certificateService.save(null));
+    }
 
+
+    @Test
+    public void shouldNotThrowExceptionAndSaveGiftCertificateWhenGetTagsIsNull() {
+        var certificate = new GiftCertificate();
+        var giftCertificateDTO = new GiftCertificateDTO();
+
+        when(giftCertificateDTO.getTags()).thenReturn(null);
         when(certificateMapper.toGiftCertificate(giftCertificateDTO)).thenReturn(certificate);
         when(repository.save(certificate)).thenReturn(1L);
 
         assertDoesNotThrow(() -> certificateService.save(giftCertificateDTO));
     }
+
 
     @Test
     public void shouldThrowExceptionIfIdIsNotFoundWhenUpdatingCertificate() {
