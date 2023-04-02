@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.dto.GiftCertificateDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.exception.ServiceException;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * @param <T> the type of the gift certificate
  */
 
-public interface GiftCertificateService<T> extends BaseService<T> {
+public interface GiftCertificateService extends BaseService<GiftCertificateDTO> {
     /**
      * Updates the gift certificate by id.
      *
@@ -21,7 +22,7 @@ public interface GiftCertificateService<T> extends BaseService<T> {
      * @throws ResourceNotFoundException if the gift certificate is not found
      */
 
-    void update(T t) throws ResourceNotFoundException;
+    void update(GiftCertificateDTO t) throws ResourceNotFoundException;
 
     /**
      * Gets a list of gift certificates with matching tags based on the provided criteria.
@@ -33,5 +34,5 @@ public interface GiftCertificateService<T> extends BaseService<T> {
      * @return a list of gift certificates with matching tags
      */
 
-    List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort);
+    List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort) throws ServiceException;
 }

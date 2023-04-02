@@ -19,5 +19,5 @@ public interface BaseService<T> {
 
     void save(T t) throws ServiceException;
 
-    void delete(long id) throws ResourceNotFoundException;
+    void delete(long id) throws ResourceNotFoundException, ServiceException;
 }

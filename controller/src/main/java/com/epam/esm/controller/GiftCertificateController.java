@@ -19,9 +19,9 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api/certificates")
 public class GiftCertificateController {
-    private final GiftCertificateService<GiftCertificateDTO> giftCertificateService;
+    private final GiftCertificateService giftCertificateService;
 
-    public GiftCertificateController(GiftCertificateService<GiftCertificateDTO> giftCertificateService) {
+    public GiftCertificateController(GiftCertificateService giftCertificateService) {
         this.giftCertificateService = giftCertificateService;
     }
 

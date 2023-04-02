@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class TagServiceImpl implements TagService<TagDTO> {
+public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
     private final GiftCertificateTagRepository giftCertificateTagRepository;
     private final TagMapper tagMapper;
@@ -60,7 +60,7 @@ public class TagServiceImpl implements TagService<TagDTO> {
             tagRepository.save(tagMapper.toTag(tagDTO));
         } catch (DataAccessException e) {
             log.error("Could not save TagDTO file, msg {}", e.getMessage());
-            throw new ServiceException("Could not save TagDTO", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ServiceException(e.getMessage(), e);
         }
     }
 
@@ -75,7 +75,7 @@ public class TagServiceImpl implements TagService<TagDTO> {
             throw new ResourceNotFoundException("Not Found!");
         } catch (DataAccessException ex) {
             log.error("failed to delete certificate with id {}, cause {}", id, ex.getMessage());
-            throw new ServiceException("Deleting a tag failed", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ServiceException("Deleting a tag failed", ex);
         }
     }
 }

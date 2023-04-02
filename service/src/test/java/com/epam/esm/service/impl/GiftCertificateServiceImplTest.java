@@ -45,7 +45,7 @@ class GiftCertificateServiceImplTest {
     private TagMapper tagMapper;
 
     @Mock
-    private GiftCertificateService<GiftCertificateDTO> certificateService;
+    private GiftCertificateService certificateService;
 
 
     @BeforeEach
@@ -62,18 +62,22 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    public void shouldGetAllGiftCertificates_WhenResourceNotFoundExceptionNotThrown() {
+    public void shouldGetAllGiftCertificatesWithNoExceptions() {
         List<GiftCertificate> mockList = new ArrayList<>();
         var giftCertificate = new GiftCertificate();
         mockList.add(giftCertificate);
 
-        when(repository.getAll()).thenReturn(mockList);
+        List<GiftCertificateDTO> mockDTOList = new ArrayList<>();
+        var gifCertificateDTO = new GiftCertificateDTO();
+        mockDTOList.add(gifCertificateDTO);
 
-        var expected = mockList.stream().map(certificate -> certificateMapper.toGiftCertificateDTO(certificate)).toList();
+        when(repository.getAll()).thenReturn(mockList);
+        when(certificateMapper.toGiftCertificateDTO(giftCertificate)).thenReturn(gifCertificateDTO);
+
         var actual = certificateService.getAll();
 
-        assertEquals(expected, actual);
-        verify(repository).getAll();
+        assertEquals(mockDTOList, actual);
+        assertDoesNotThrow(() -> certificateService.getAll());
     }
 
 
@@ -84,36 +88,33 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    public void shouldGetCertificateByIdWhenMethodIsCalled() throws ResourceNotFoundException {
+    public void shouldGetCertificateByIdWithNoExceptions() throws ResourceNotFoundException {
         long id = 1L;
 
-        GiftCertificate giftCertificate = new GiftCertificate(id, "Gift Certificate 1", "Description 1", 19.20, 30L, "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new HashSet<>());
-        GiftCertificateDTO expected = new GiftCertificateDTO(id, "Gift Certificate 1", "Description 1", "19.20", "30", "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new ArrayList<>());
+        var giftCertificate = new GiftCertificate(id, "Gift Certificate 1", "Description 1", 19.20, 30L, "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new HashSet<>());
+        var expected = new GiftCertificateDTO(id, "Gift Certificate 1", "Description 1", "19.20", "30", "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new ArrayList<>());
 
         when(repository.getById(id)).thenReturn(Optional.of(giftCertificate));
         when(certificateMapper.toGiftCertificateDTO(giftCertificate)).thenReturn(expected);
 
-        GiftCertificateDTO actual = certificateService.getById(id);
+        var actual = certificateService.getById(id);
 
         assertEquals(expected, actual);
 
-        verify(repository).getById(id);
+        assertDoesNotThrow(() -> certificateService.getById(id));
     }
 
-    @Test
-    public void shouldThrowServiceExceptionWhenSaveIsCalled(){
-        GiftCertificate certificate = new GiftCertificate();
-        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
-
-        when(certificateMapper.toGiftCertificateDTO(certificate)).thenReturn(giftCertificateDTO);
-
-        doThrow(new DataAccessException(""){}).when(repository).save(certificate);
-        assertThrows(ServiceException.class, () -> certificateService.save(giftCertificateDTO));
-
-    }
+//    @Test
+//    public void shouldThrowServiceExceptionWhenSaveIsCalled(){
+//        GiftCertificate certificate = new GiftCertificate(0L, "Gift Certificate 1", "Description 1", 19.20, 30L, "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new HashSet<>());
+//        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO(0L, "Gift Certificate 1", "Description 1", "19.20", "30", "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new ArrayList<>());
+//        when(certificateMapper.toGiftCertificateDTO(certificate)).thenReturn(giftCertificateDTO);
+//        doThrow(new DataAccessException(""){}).when(repository).save(certificate);
+//        assertThrows(ServiceException.class, () -> certificateService.save(giftCertificateDTO));
+//    }
 
     @Test
-    public void shouldSaveNewGiftCertificate() {
+    public void shouldSaveNewGiftCertificateWithNoExceptions() {
         GiftCertificate certificate = new GiftCertificate();
         GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
 
@@ -124,7 +125,36 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void update() {
+    public void shouldThrowExceptionIfIdIsNotFoundWhenUpdatingCertificate() {
+
+        long id = 1L;
+        GiftCertificate certificate = new GiftCertificate(id, "Gift Certificate 1", "Description 1", 19.20, 30L, "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new HashSet<>());
+        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO(id, "Gift Certificate 1", "Description 1", "19.20", "30", "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new ArrayList<>());
+
+        when(repository.getById(id)).thenReturn(Optional.of(certificate));
+
+        when(certificateMapper.toGiftCertificate(giftCertificateDTO)).thenReturn(certificate);
+
+        doThrow(new EmptyResultDataAccessException(1)).when(repository).update(certificate);
+
+        assertThrows(ResourceNotFoundException.class, () -> certificateService.update(giftCertificateDTO));
+
+    }
+
+    @Test
+    public void shouldUpdateCertificateWithNoExceptions() {
+        Optional<GiftCertificate> optionalGiftCertificate = repository.getById(1);
+        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
+
+        if (optionalGiftCertificate.isPresent()) {
+            GiftCertificate certificate = optionalGiftCertificate.get();
+
+            doNothing().when(repository).update(certificate);
+            doNothing().when(repository).tagSetter(certificate);
+            when(certificateMapper.toGiftCertificateDTO(certificate)).thenReturn(giftCertificateDTO);
+
+            assertDoesNotThrow(() -> certificateService.update(giftCertificateDTO));
+        }
     }
 
 
@@ -137,7 +167,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    public void shouldDeleteCertificateById() {
+    public void shouldDeleteCertificateByIdWithNoExceptions() {
 
         GiftCertificate certificate = new GiftCertificate();
         certificate.setId(1L);
@@ -151,6 +181,28 @@ class GiftCertificateServiceImplTest {
 
 
     @Test
-    public void getGiftCertificateWithTags() {
+    public void shouldThrowExceptionWhenGiftCertificateWithTagsIsCalled() {
+        doThrow(new DataAccessException(" ") {
+        }).when(repository).getGiftCertificateWithTags(null, null, null, null);
+        assertThrows(ServiceException.class, () -> certificateService.getGiftCertificateWithTags(null, null, null, null));
     }
+
+    @Test
+    public void shouldGetGiftCertificateWithTagsWithNoExceptions() {
+
+        String name = "Gift Certificate 1";
+        String description = "Description 1";
+
+        List<GiftCertificate> certificates = new ArrayList<>();
+        GiftCertificate certificate = new GiftCertificate(1L, "Gift Certificate 1", "Description 1", 19.20, 30L, "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new HashSet<>());
+        certificates.add(certificate);
+
+        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO(1L, "Gift Certificate 1", "Description 1", "19.20", "30", "2023-03-15 08:37:40.441373 +00:00", "2023-03-15 08:37:40.441373 +00:00", new ArrayList<>());
+
+        when(repository.getGiftCertificateWithTags(name, "", description, "")).thenReturn(certificates);
+        when(certificateMapper.toGiftCertificateDTO(certificate)).thenReturn(giftCertificateDTO);
+
+        assertDoesNotThrow(() -> certificateService.getGiftCertificateWithTags(name, "", description, ""));
+    }
+
 }

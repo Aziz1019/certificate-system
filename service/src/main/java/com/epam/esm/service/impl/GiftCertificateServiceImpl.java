@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Slf4j
-public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificateDTO> {
+public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateRepository giftCertificateRepository;
     private final TagRepository tagRepository;
     private final GiftCertificateTagRepository giftCertificateTagRepository;
@@ -95,9 +95,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                 });
             }
 
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             log.error("Could not create gift certificate - > {}", e.getMessage());
-            throw new ServiceException("Error saving resource", e, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ServiceException("Error saving resource", e);
         }
     }
 
@@ -120,6 +120,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         long id = giftCertificateDTO.getId();
         try {
             log.info("> > > { Updating a certificate } < < <");
+
+            giftCertificateRepository.getById(id);
 
             //  Adding tags to tag table from tags list in CertificateDTO
 
@@ -161,7 +163,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();
         } catch (DataAccessException ex) {
             log.error("failed to filter certificate with params, cause {}", ex.getMessage());
-            throw new ServiceException("could not update certificate ", ex, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ServiceException("could not update certificate ", ex);
         }
     }
 }

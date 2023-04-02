@@ -19,9 +19,9 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api/tags")
 public class TagController {
-    private final TagService<TagDTO> tagService;
+    private final TagService tagService;
 
-    public TagController(TagService<TagDTO> tagService) {
+    public TagController(TagService tagService) {
         this.tagService = tagService;
     }
 
