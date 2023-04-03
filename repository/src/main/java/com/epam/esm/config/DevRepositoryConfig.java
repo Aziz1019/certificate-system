@@ -3,7 +3,6 @@ package com.epam.esm.config;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -11,15 +10,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 /**
-
- Configuration class for setting up database-related beans and properties.
+ * Configuration class for setting up database-related beans and properties.
  */
 @Configuration
-@Profile("prod")
+@Profile("dev")
 @EnableTransactionManagement
 @ComponentScan(basePackages = "com.epam.esm")
-@PropertySource("classpath:application.properties")
-public class RepositoryConfiguration {
+@PropertySource("classpath:application-dev.properties")
+public class DevRepositoryConfig {
 
     @Value("${db.url}")
     private String url;
@@ -35,9 +33,9 @@ public class RepositoryConfiguration {
 
 
     /**
-
-     Creates a basic data source for connecting to the database.
-     @return a {@link javax.sql.DataSource} object representing the data source
+     * Creates a basic data source for connecting to the database.
+     *
+     * @return a {@link javax.sql.DataSource} object representing the data source
      */
     @Bean
     public DataSource dataSource() {
@@ -49,11 +47,12 @@ public class RepositoryConfiguration {
         dataSource.setPassword(password);
         return dataSource;
     }
-    /**
 
-     Creates a transaction manager for managing transactions with the database.
-     @param dataSource the data source to be used for managing transactions
-     @return a {@link org.springframework.jdbc.datasource.DataSourceTransactionManager} object representing the transaction manager
+    /**
+     * Creates a transaction manager for managing transactions with the database.
+     *
+     * @param dataSource the data source to be used for managing transactions
+     * @return a {@link org.springframework.jdbc.datasource.DataSourceTransactionManager} object representing the transaction manager
      */
     @Bean
     public DataSourceTransactionManager dataSourceTransactionManager(DataSource dataSource) {
@@ -61,9 +60,9 @@ public class RepositoryConfiguration {
     }
 
     /**
-
-     Creates a {@link org.springframework.jdbc.core.JdbcTemplate} object for executing SQL statements against the database.
-     @return a {@link org.springframework.jdbc.core.JdbcTemplate} object
+     * Creates a {@link org.springframework.jdbc.core.JdbcTemplate} object for executing SQL statements against the database.
+     *
+     * @return a {@link org.springframework.jdbc.core.JdbcTemplate} object
      */
     @Bean
     public JdbcTemplate jdbcTemplate() {
