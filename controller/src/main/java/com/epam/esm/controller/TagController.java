@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.TagDTO;
+import com.epam.esm.exception.ServiceException;
 import com.epam.esm.responseMessage.ResMessage;
 import com.epam.esm.service.TagService;
 import jakarta.validation.Valid;
@@ -54,7 +55,7 @@ public class TagController {
      * @return a ResMessage indicating whether the TagDTO resource was successfully created or not, along with any error messages.
      */
     @PostMapping
-    public ResMessage<Object> createTag(@RequestBody @Valid TagDTO tagDTO, BindingResult result) {
+    public ResMessage<Object> createTag(@RequestBody @Valid TagDTO tagDTO, BindingResult result) throws ServiceException {
         log.info("Requesting create . . . ");
         if (result.hasErrors()) {
             log.error("Something went wrong, check validation");
@@ -74,7 +75,7 @@ public class TagController {
      * @return a ResMessage indicating whether the TagDTO resource was successfully deleted or not.
      */
     @DeleteMapping("/{id}")
-    public ResMessage<Object> deleteTagById(@PathVariable long id) {
+    public ResMessage<Object> deleteTagById(@PathVariable long id) throws ServiceException {
         tagService.delete(id);
         return new ResMessage<>(HttpStatus.OK, "Success");
     }

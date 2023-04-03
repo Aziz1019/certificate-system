@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.GiftCertificateDTO;
+import com.epam.esm.exception.ServiceException;
 import com.epam.esm.responseMessage.ResMessage;
 import com.epam.esm.service.GiftCertificateService;
 import jakarta.validation.Valid;
@@ -57,7 +58,7 @@ public class GiftCertificateController {
      * @return a {@link ResMessage} with the status of the operation.
      */
     @PostMapping
-    public ResMessage<Object> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
+    public ResMessage<Object> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) throws ServiceException {
         log.info("> > > { Post Request | Create a new GiftCertificate }");
         if (result.hasErrors()) {
             log.error("Something went wrong, check validation");
@@ -99,7 +100,7 @@ public class GiftCertificateController {
      */
 
     @DeleteMapping("/{id}")
-    public ResMessage<Object> deleteById(@PathVariable long id) {
+    public ResMessage<Object> deleteById(@PathVariable long id) throws ServiceException {
         giftCertificateService.delete(id);
         return new ResMessage<>(HttpStatus.OK, "Success");
     }
@@ -112,7 +113,7 @@ public class GiftCertificateController {
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "tag", required = false) String tagName,
-            @RequestParam(name = "sort", defaultValue = "name_asc") String sort) {
+            @RequestParam(name = "sort", defaultValue = "name_asc") String sort) throws ServiceException {
 
         return new ResMessage<>(giftCertificateService.getGiftCertificateWithTags(name, tagName, description, sort));
     }
