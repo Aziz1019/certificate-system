@@ -4,14 +4,12 @@ import com.epam.esm.dto.TagDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.TagMapper;
-import com.epam.esm.model.Tag;
 import com.epam.esm.repository.GiftCertificateTagRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

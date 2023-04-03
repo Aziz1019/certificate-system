@@ -1,13 +1,11 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateDTO;
-import com.epam.esm.dto.TagDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.model.GiftCertificate;
-import com.epam.esm.model.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.GiftCertificateTagRepository;
 import com.epam.esm.repository.TagRepository;
@@ -58,7 +56,7 @@ class GiftCertificateServiceImplTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         certificateService = new GiftCertificateServiceImpl(repository, tagRepository, giftCertificateTagRepository, certificateMapper, tagMapper);
-        tagService = new TagServiceImpl(tagRepository,giftCertificateTagRepository,tagMapper);
+        tagService = new TagServiceImpl(tagRepository, giftCertificateTagRepository, tagMapper);
     }
 
     @Test

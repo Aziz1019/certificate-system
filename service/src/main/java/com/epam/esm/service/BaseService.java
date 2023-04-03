@@ -6,10 +6,9 @@ import com.epam.esm.exception.ServiceException;
 import java.util.List;
 
 /**
-
- The BaseService interface provides a set of methods to retrieve, create, update, and delete resources of type T.
-
- @param <T> The type of the resource.
+ * The BaseService interface provides a set of methods to retrieve, create, update, and delete resources of type T.
+ *
+ * @param <T> The type of the resource.
  */
 
 public interface BaseService<T> {

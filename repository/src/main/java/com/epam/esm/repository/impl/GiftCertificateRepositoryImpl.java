@@ -10,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
@@ -42,12 +43,11 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         GiftCertificate giftCertificate;
         try {
             giftCertificate = jdbcTemplate.queryForObject(TableQueries.GET_GIFT_CERTIFICATES_BY_ID.getQuery(), certificateRowMapper, id);
-            if(giftCertificate != null) {
+            if (giftCertificate != null) {
                 setAllTags(giftCertificate);
                 return Optional.of(giftCertificate);
             }
-        }
-        catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             log.error(e.getMessage());
         }
         return Optional.empty();

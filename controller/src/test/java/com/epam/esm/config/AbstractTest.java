@@ -1,12 +1,10 @@
 package com.epam.esm.config;
 
-import com.epam.esm.dto.GiftCertificateDTO;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 

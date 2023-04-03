@@ -83,6 +83,8 @@ class TagControllerTest extends AbstractTest {
 
     @Test
     public void createTag() throws Exception {
+
+        // Mocking tagService Save method
         TagDTO tag = new TagDTO(1, "Taggy");
         doNothing().when(tagService).save(tag);
 
@@ -104,9 +106,11 @@ class TagControllerTest extends AbstractTest {
 
     @Test
     public void deleteTagById() throws Exception {
+        // Mocking tagService Delete method
         long tagId = 1L;
         TagDTO tag = new TagDTO(tagId, "Taggy");
         doNothing().when(tagService).save(tag);
+
 
         String uriForId = uri + "/" + tagId;
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uriForId)

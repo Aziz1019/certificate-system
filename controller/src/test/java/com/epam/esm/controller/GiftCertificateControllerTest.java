@@ -40,7 +40,7 @@ class GiftCertificateControllerTest extends AbstractTest {
 
     @Test
     public void testGetCertificatesReturnsAllCertificates() throws Exception {
-
+        // Mocking giftCertificateService Get All method
         List<GiftCertificateDTO> certificates = new ArrayList<>();
         certificates.add(new GiftCertificateDTO());
         when(giftCertificateService.getAll()).thenReturn(certificates);
@@ -59,8 +59,8 @@ class GiftCertificateControllerTest extends AbstractTest {
 
     @Test
     public void testGetCertificateByIdReturnsMatchingCertificate() throws Exception {
+        // Mocking giftCertificateService Get By ID method
         long certificateId = 1L;
-
         GiftCertificateDTO certificateDTO = new GiftCertificateDTO();
         certificateDTO.setId(1L);
         when(giftCertificateService.getById(certificateId)).thenReturn(certificateDTO);
@@ -79,7 +79,7 @@ class GiftCertificateControllerTest extends AbstractTest {
 
     @Test
     public void testCreateGiftCertificateReturnsNewGiftCertificate() throws Exception {
-
+        // Mocking giftCertificateService Save method
         String uri = "/api/certificates";
         GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
         giftCertificateDTO.setName("Test Gift");
@@ -107,14 +107,13 @@ class GiftCertificateControllerTest extends AbstractTest {
 
     @Test
     public void testUpdateGiftCertificateReturnsUpdatedNameOfChosenCertificate() throws Exception {
+        // Mocking giftCertificateService update method
         long certificateId = 1L;
-
-
         GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
         giftCertificateDTO.setId(certificateId);
         when(giftCertificateService.getById(certificateId)).thenReturn(giftCertificateDTO);
 
-
+        // Sending getById request to specific id (for checking purposes)
         String uri = "/api/certificates";
         String uri_for_id = uri + "/" + certificateId;
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri_for_id)
@@ -124,12 +123,11 @@ class GiftCertificateControllerTest extends AbstractTest {
         assertEquals(200, status);
 
         String content = mvcResult.getResponse().getContentAsString();
-
+        // Updating the name of the GiftCertificate
         GiftCertificateDTO certificateToUpdate = super.mapFromJson(content, GiftCertificateDTO.class);
         certificateToUpdate.setName("Updated name");
 
         // Perform the update request
-
         doNothing().when(giftCertificateService).update(certificateToUpdate);
 
         MvcResult updateMvcResult = mvc.perform(MockMvcRequestBuilders.patch(uri)
@@ -145,7 +143,7 @@ class GiftCertificateControllerTest extends AbstractTest {
     @Test
     public void testDeleteByIdReturnsSuccessIfDeleted() throws Exception {
         long certificateId = 1L; // Set the certificate ID to fetch
-        
+
         doNothing().when(giftCertificateService).delete(certificateId);
 
         String uri = "/api/certificates/" + certificateId;
