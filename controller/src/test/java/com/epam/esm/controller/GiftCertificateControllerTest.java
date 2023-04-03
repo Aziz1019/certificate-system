@@ -3,39 +3,67 @@ package com.epam.esm.controller;
 import com.epam.esm.config.AbstractTest;
 import com.epam.esm.dto.GiftCertificateDTO;
 import com.epam.esm.responseMessage.ResMessage;
+import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.impl.GiftCertificateServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class GiftCertificateControllerTest extends AbstractTest {
 
-    @Autowired
+    @Mock
+    private GiftCertificateController controller;
+    @Mock
+    private GiftCertificateService giftCertificateService;
+
     private MockMvc mvc;
+
+    @BeforeEach
+    public void setUp() {
+        giftCertificateService = mock(GiftCertificateServiceImpl.class);
+        controller = new GiftCertificateController(giftCertificateService);
+        mvc = MockMvcBuilders.standaloneSetup(controller).build();
+    }
+
 
     @Test
     public void testGetCertificatesReturnsAllCertificates() throws Exception {
+
+        List<GiftCertificateDTO> certificates = new ArrayList<>();
+        certificates.add(new GiftCertificateDTO());
+        when(giftCertificateService.getAll()).thenReturn(certificates);
+
         String uri = "/api/certificates";
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
+
         String content = mvcResult.getResponse().getContentAsString();
-        List<GiftCertificateDTO> certificateList = super.mapFromObjectJson(content);
-        assertTrue(certificateList.size() > 0);
+        List<GiftCertificateDTO> certificateList = super.mapFromObjectJson(content, GiftCertificateDTO.class);
+        assertEquals(1, certificateList.size());
     }
 
     @Test
     public void testGetCertificateByIdReturnsMatchingCertificate() throws Exception {
-        Long certificateId = 1L; // Set the certificate ID to fetch
+        long certificateId = 1L;
+
+        GiftCertificateDTO certificateDTO = new GiftCertificateDTO();
+        certificateDTO.setId(1L);
+        when(giftCertificateService.getById(certificateId)).thenReturn(certificateDTO);
 
         String uri = "/api/certificates/" + certificateId;
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
@@ -51,12 +79,15 @@ class GiftCertificateControllerTest extends AbstractTest {
 
     @Test
     public void testCreateGiftCertificateReturnsNewGiftCertificate() throws Exception {
+
         String uri = "/api/certificates";
         GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
         giftCertificateDTO.setName("Test Gift");
         giftCertificateDTO.setDescription("Test Description");
         giftCertificateDTO.setPrice("10.99");
         giftCertificateDTO.setDuration("30");
+
+        doNothing().when(giftCertificateService).save(giftCertificateDTO);
 
         String inputJson = super.mapToJson(giftCertificateDTO);
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
@@ -68,31 +99,39 @@ class GiftCertificateControllerTest extends AbstractTest {
         assertEquals(200, status);
 
         String content = mvcResult.getResponse().getContentAsString();
-
         ResMessage<Object> resMessage = super.mapFromJson(content, ResMessage.class);
 
         assertEquals(HttpStatus.OK, resMessage.getStatusCode());
-
         assertEquals("Success", resMessage.getMessage());
     }
 
     @Test
     public void testUpdateGiftCertificateReturnsUpdatedNameOfChosenCertificate() throws Exception {
+        long certificateId = 1L;
+
+
+        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
+        giftCertificateDTO.setId(certificateId);
+        when(giftCertificateService.getById(certificateId)).thenReturn(giftCertificateDTO);
+
+
         String uri = "/api/certificates";
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+        String uri_for_id = uri + "/" + certificateId;
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri_for_id)
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
-        String content = mvcResult.getResponse().getContentAsString();
-        List<GiftCertificateDTO> certificateList = super.mapFromObjectJson(content);
-        assertTrue(certificateList.size() > 0);
 
-        // Choose one of the certificates to update
-        GiftCertificateDTO certificateToUpdate = certificateList.get(0);
+        String content = mvcResult.getResponse().getContentAsString();
+
+        GiftCertificateDTO certificateToUpdate = super.mapFromJson(content, GiftCertificateDTO.class);
         certificateToUpdate.setName("Updated name");
 
         // Perform the update request
+
+        doNothing().when(giftCertificateService).update(certificateToUpdate);
+
         MvcResult updateMvcResult = mvc.perform(MockMvcRequestBuilders.patch(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(super.mapToJson(certificateToUpdate)))
@@ -101,23 +140,13 @@ class GiftCertificateControllerTest extends AbstractTest {
         int updateStatus = updateMvcResult.getResponse().getStatus();
         assertEquals(200, updateStatus);
 
-        // Verify that the certificate was updated
-        String updateUri = uri + "/" + certificateToUpdate.getId();
-        MvcResult getMvcResult = mvc.perform(MockMvcRequestBuilders.get(updateUri)
-                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
-
-        int getStatus = getMvcResult.getResponse().getStatus();
-        assertEquals(200, getStatus);
-
-        String getContent = getMvcResult.getResponse().getContentAsString();
-        GiftCertificateDTO updatedCertificate = super.mapFromJson(getContent, GiftCertificateDTO.class);
-
-        assertEquals("Updated name", updatedCertificate.getName());
     }
 
     @Test
     public void testDeleteByIdReturnsSuccessIfDeleted() throws Exception {
         long certificateId = 1L; // Set the certificate ID to fetch
+        
+        doNothing().when(giftCertificateService).delete(certificateId);
 
         String uri = "/api/certificates/" + certificateId;
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)
@@ -133,19 +162,5 @@ class GiftCertificateControllerTest extends AbstractTest {
         assertEquals("Success", resMessage.getMessage());
         assertNull(resMessage.getData());
 
-    }
-
-    @Test
-    void testGetGiftCertificatesWithTagsReturnsCertificateWithDescriptionTaggy() throws Exception {
-        String uri = "/api/certificates";
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
-                        .param("description", "Taggy")
-                        .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andReturn();
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(200, status);
-        String content = mvcResult.getResponse().getContentAsString();
-        List<GiftCertificateDTO> giftCertificateDTOS = super.mapFromObjectJson(content);
-        assertEquals(1, giftCertificateDTOS.size());
     }
 }

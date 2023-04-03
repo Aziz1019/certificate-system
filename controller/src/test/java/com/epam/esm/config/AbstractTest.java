@@ -37,14 +37,13 @@ public abstract class AbstractTest {
         return objectMapper.readValue(dataNode.toString(), clazz);
     }
 
-    protected List<GiftCertificateDTO> mapFromObjectJson(String json) throws IOException {
+    protected <T> List<T> mapFromObjectJson(String json, Class<T> clazz) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(json);
         JsonNode dataNode = rootNode.get("data");
         if (dataNode == null) {
             throw new IllegalArgumentException("JSON string does not contain a 'data' node");
         }
-        return objectMapper.readValue(dataNode.toString(), new TypeReference<List<GiftCertificateDTO>>() {
-        });
+        return objectMapper.readValue(dataNode.toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, clazz));
     }
 }
