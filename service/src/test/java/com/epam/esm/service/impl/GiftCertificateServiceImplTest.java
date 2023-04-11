@@ -20,10 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -188,7 +185,8 @@ class GiftCertificateServiceImplTest {
     public void shouldThrowExceptionWhenGiftCertificateWithTagsIsCalled() {
         doThrow(new DataAccessException(" ") {
         }).when(repository).getGiftCertificateWithTags(null, null, null, null);
-        assertThrows(ServiceException.class, () -> certificateService.getGiftCertificateWithTags(null, null, null, null));
+        Map<String, String> allParams = new HashMap<>();
+        assertThrows(ServiceException.class, () -> certificateService.getGiftCertificateWithTags(allParams));
     }
 
     @Test
@@ -205,8 +203,13 @@ class GiftCertificateServiceImplTest {
 
         when(repository.getGiftCertificateWithTags(name, "", description, "")).thenReturn(certificates);
         when(certificateMapper.toGiftCertificateDTO(certificate)).thenReturn(giftCertificateDTO);
+        Map<String, String> allParams = new HashMap<>();
+        allParams.put("name",name);
+        allParams.put("tag","");
+        allParams.put("description", description);
+        allParams.put("sort", "");
 
-        assertDoesNotThrow(() -> certificateService.getGiftCertificateWithTags(name, "", description, ""));
+        assertDoesNotThrow(() -> certificateService.getGiftCertificateWithTags(allParams));
     }
 
 }

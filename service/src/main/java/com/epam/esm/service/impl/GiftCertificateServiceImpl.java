@@ -20,18 +20,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
 @Transactional
+@Service
 @Slf4j
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateRepository giftCertificateRepository;
     private final TagRepository tagRepository;
     private final GiftCertificateTagRepository giftCertificateTagRepository;
-    protected final GiftCertificateMapper certificateMapper;
-    protected final TagMapper tagMapper;
+    private final GiftCertificateMapper certificateMapper;
+    private final TagMapper tagMapper;
+
 
     public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, TagRepository tagRepository, GiftCertificateTagRepository giftCertificateTagRepository, GiftCertificateMapper certificateMapper, TagMapper tagMapper) {
         this.giftCertificateRepository = giftCertificateRepository;
@@ -78,7 +80,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void save(GiftCertificateDTO giftCertificateDTO) throws ServiceException {
         log.info("> > > { Add New Gift Certificate }");
         try {
-
             GiftCertificate giftCertificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
             Long certificateId = giftCertificateRepository.save(giftCertificate);
 
@@ -156,8 +157,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort) throws ServiceException {
+    public List<GiftCertificateDTO> getGiftCertificateWithTags(Map<String, String> allParams) throws ServiceException {
         try {
+            String name = allParams.get("name");
+            String description = allParams.get("description");
+            String tagName = allParams.get("tag");
+            String sort = allParams.getOrDefault("sort", "name_asc");
+
             List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
             giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
             return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();

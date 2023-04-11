@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller class that handles HTTP requests related to Gift Certificate resources.
@@ -20,6 +21,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api/certificates")
 public class GiftCertificateController {
+
     private final GiftCertificateService giftCertificateService;
 
     public GiftCertificateController(GiftCertificateService giftCertificateService) {
@@ -58,7 +60,7 @@ public class GiftCertificateController {
      * @return a {@link ResMessage} with the status of the operation.
      */
     @PostMapping
-    public ResMessage<Object> createGiftCertificate(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) throws ServiceException {
+    public ResMessage<Object> createGiftCertificate(@Valid @RequestBody GiftCertificateDTO giftCertificateDTO, BindingResult result) throws ServiceException {
         log.info("> > > { Post Request | Create a new GiftCertificate }");
         if (result.hasErrors()) {
             log.error("Something went wrong, check validation");
@@ -109,13 +111,8 @@ public class GiftCertificateController {
      * Retrieves a list of gift certificates with the specified name, tag name and/or description.
      */
     @PutMapping
-    public ResMessage<List<GiftCertificateDTO>> getGiftCertificatesWithTags(
-            @RequestParam(name = "name", required = false) String name,
-            @RequestParam(name = "description", required = false) String description,
-            @RequestParam(name = "tag", required = false) String tagName,
-            @RequestParam(name = "sort", defaultValue = "name_asc") String sort) throws ServiceException {
-
-        return new ResMessage<>(giftCertificateService.getGiftCertificateWithTags(name, tagName, description, sort));
+    public ResMessage<List<GiftCertificateDTO>> getGiftCertificatesWithTags(@RequestParam Map<String, String> allParams) throws ServiceException {
+        return new ResMessage<>(giftCertificateService.getGiftCertificateWithTags(allParams));
     }
 
 }

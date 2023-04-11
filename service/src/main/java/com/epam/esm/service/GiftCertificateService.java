@@ -5,6 +5,7 @@ import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * GiftCertificateService interface defines the methods to handle business logic operations
@@ -27,12 +28,7 @@ public interface GiftCertificateService extends BaseService<GiftCertificateDTO> 
     /**
      * Gets a list of gift certificates with matching tags based on the provided criteria.
      *
-     * @param name        the name of the gift certificate to search for
-     * @param tagName     the name of the tag to search for
-     * @param description the description of the gift certificate to search for
-     * @param sort        the field to sort the results by
-     * @return a list of gift certificates with matching tags
      */
 
-    List<GiftCertificateDTO> getGiftCertificateWithTags(String name, String tagName, String description, String sort) throws ServiceException;
+    List<GiftCertificateDTO> getGiftCertificateWithTags(Map<String, String> allParams) throws ServiceException;
 }

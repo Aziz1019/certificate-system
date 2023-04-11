@@ -68,9 +68,13 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
         String sorted = switch (sort) {
             case "name_desc" -> "name DESC";
-            case "date_asc" -> "create_date ASC";
+            case "date_asc" -> "create_date";
             case "date_desc" -> "create_date DESC";
-            default -> "name ASC";
+
+            case "name_date_desc" -> "name, create_date DESC";
+            case "name_date" -> "name, create_date";
+
+            default -> "name";
         };
 
         String queryWithTag = "SELECT gc.*" +
