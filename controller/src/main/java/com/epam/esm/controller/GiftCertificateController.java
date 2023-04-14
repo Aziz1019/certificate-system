@@ -105,7 +105,7 @@ public class GiftCertificateController {
     /**
      * Retrieves a list of gift certificates with the specified name, tag name and/or description.
      */
-    @PutMapping
+    @GetMapping("/search")
     public ResMessage<List<GiftCertificateDTO>> getGiftCertificatesWithTags(@RequestParam Map<String, String> allParams) throws ServiceException {
         return new ResMessage<>(giftCertificateService.getGiftCertificateWithTags(allParams));
     }
