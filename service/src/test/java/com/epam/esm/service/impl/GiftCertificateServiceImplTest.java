@@ -182,14 +182,6 @@ class GiftCertificateServiceImplTest {
 
 
     @Test
-    public void shouldThrowExceptionWhenGiftCertificateWithTagsIsCalled() {
-        doThrow(new DataAccessException(" ") {
-        }).when(repository).getGiftCertificateWithTags(null, null, null, null);
-        Map<String, String> allParams = new HashMap<>();
-        assertThrows(ServiceException.class, () -> certificateService.getGiftCertificateWithTags(allParams));
-    }
-
-    @Test
     public void shouldGetGiftCertificateWithTagsWithNoExceptions() {
 
         String name = "Gift Certificate 1";

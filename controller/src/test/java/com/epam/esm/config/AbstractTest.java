@@ -1,6 +1,7 @@
 package com.epam.esm.config;
 
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -14,6 +15,7 @@ import java.util.List;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = TestControllerConfig.class)
+@ActiveProfiles("dev")
 public abstract class AbstractTest {
 
     protected String mapToJson(Object obj) throws JsonProcessingException {

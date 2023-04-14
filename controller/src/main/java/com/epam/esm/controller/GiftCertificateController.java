@@ -4,6 +4,7 @@ import com.epam.esm.dto.GiftCertificateDTO;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.responseMessage.ResMessage;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.utils.Validator;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,7 @@ public class GiftCertificateController {
         return new ResMessage<>(giftCertificateService.getById(id));
     }
 
+
     /**
      * Creates a new gift certificate.
      *
@@ -81,15 +83,9 @@ public class GiftCertificateController {
      * @return a {@link ResMessage} with the status of the operation.
      */
     @PatchMapping
-    public ResMessage<Object> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) {
+    public ResMessage<Object> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) throws  ServiceException {
         log.info("> > > { Patch Request | Update an existing GiftCertificate }");
-        if (result.hasErrors()) {
-            log.error("Something went wrong, check validation");
-            List<String> violations = new ArrayList<>();
-            result.getFieldErrors().forEach(fieldError
-                    -> violations.add(fieldError.getDefaultMessage()));
-            return new ResMessage<>(HttpStatus.NOT_MODIFIED, "Could not update", violations);
-        }
+        Validator.validate(giftCertificateDTO.getId(),result);
         giftCertificateService.update(giftCertificateDTO);
         return new ResMessage<>(HttpStatus.OK, "Success");
     }

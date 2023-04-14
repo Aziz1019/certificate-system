@@ -76,7 +76,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
             default -> "name";
         };
-
+// refactor
         String queryWithTag = "SELECT gc.*" +
                 "FROM gift_certificate gc" +
                 "         LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id" +
