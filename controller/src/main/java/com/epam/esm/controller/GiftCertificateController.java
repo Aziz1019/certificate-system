@@ -86,8 +86,7 @@ public class GiftCertificateController {
     public ResMessage<Object> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) throws  ServiceException {
         log.info("> > > { Patch Request | Update an existing GiftCertificate }");
         Validator.validate(giftCertificateDTO.getId(),result);
-        giftCertificateService.update(giftCertificateDTO);
-        return new ResMessage<>(HttpStatus.OK, "Success");
+        return new ResMessage<>(HttpStatus.OK, "Success", giftCertificateService.update(giftCertificateDTO));
     }
 
     /**

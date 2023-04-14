@@ -4,7 +4,11 @@ import com.epam.esm.enums.TableQueries;
 import com.epam.esm.mapper.GiftCertificateRowMapper;
 import com.epam.esm.mapper.TagRowMapper;
 import com.epam.esm.model.GiftCertificate;
+import com.epam.esm.model.GiftCertificateTag;
+import com.epam.esm.model.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.GiftCertificateTagRepository;
+import com.epam.esm.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,11 +26,17 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     private final JdbcTemplate jdbcTemplate;
     private final TagRowMapper tagRowMapper;
     private final GiftCertificateRowMapper certificateRowMapper;
+    
+    private final TagRepository tagRepository;
+    
+    private final GiftCertificateTagRepository certificateTagRepository;
 
-    public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate, TagRowMapper tagRowMapper, GiftCertificateRowMapper certificateRowMapper) {
+    public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate, TagRowMapper tagRowMapper, GiftCertificateRowMapper certificateRowMapper, TagRepository tagRepository, GiftCertificateTagRepository certificateTagRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.tagRowMapper = tagRowMapper;
         this.certificateRowMapper = certificateRowMapper;
+        this.tagRepository = tagRepository;
+        this.certificateTagRepository = certificateTagRepository;
     }
 
     @Override
@@ -107,14 +117,31 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     }
 
     @Override
-    public void update(GiftCertificate giftCertificate) {
+    public void update(GiftCertificate certificate) {
         log.info("> > > Loading { Updating GiftCertificates By ID } ");
         jdbcTemplate.update(TableQueries.UPDATE_GIFT_CERTIFICATES.getQuery(),
-                giftCertificate.getName(),
-                giftCertificate.getDescription(),
-                giftCertificate.getPrice(),
-                giftCertificate.getDuration(),
-                giftCertificate.getId());
+                certificate.getName(),
+                certificate.getDescription(),
+                certificate.getPrice(),
+                certificate.getDuration(),
+                certificate.getId());
+
+        if (certificate.getTags() != null) {
+            joinTags(certificate);
+        }
+    }
+
+    private void joinTags(GiftCertificate certificate) {
+        certificate.getTags().forEach(tag -> {
+            Optional<Tag> byId = tagRepository.getById(tag.getId());
+            if (byId.isEmpty()) {
+                tag.setId(tagRepository.save(tag));
+            }
+        });
+        // Using Join table for joining tag and certificate
+        certificate.getTags()
+                .forEach(tag -> certificateTagRepository.save(new GiftCertificateTag(
+                        certificate.getId(), tag.getId())));
     }
 
     public void setAllTags(GiftCertificate certificate) {

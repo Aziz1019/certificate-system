@@ -1,7 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateDTO;
-import com.epam.esm.dto.TagDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.GiftCertificateMapper;
@@ -117,39 +116,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public void update(GiftCertificateDTO giftCertificateDTO) throws ResourceNotFoundException {
+    public GiftCertificateDTO update(GiftCertificateDTO giftCertificateDTO) throws ResourceNotFoundException {
         long id = giftCertificateDTO.getId();
         try {
             log.info("> > > { Updating a certificate } < < <");
 
-            giftCertificateRepository.getById(id);
+            giftCertificateRepository.update(certificateMapper.toGiftCertificate(giftCertificateDTO));
 
-            //  Adding tags to tag table from tags list in CertificateDTO
-
-            List<TagDTO> tags = giftCertificateDTO.getTags();
-            for (TagDTO tag : tags) {
-                Optional<Tag> byId = tagRepository.getById(tag.getId());
-                if (byId.isEmpty()) {
-                    tag.setId(tagRepository.save(tagMapper.toTag(tag)));
-                }
-            }
-
-            GiftCertificate certificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
-
-            // Updating Certificate and deleting the tag relation
-            giftCertificateRepository.update(certificate);
-
-            giftCertificateTagRepository.delete(certificate.getId());
-
-            // Adding tag and certificate details to join table.
-            certificate.getTags()
-                    .forEach(tag -> giftCertificateTagRepository.save(new GiftCertificateTag(
-                            certificate.getId(), tag.getId())));
-
-            // sets all the tags to certificate
-            giftCertificateRepository.tagSetter(certificate);
-
-
+            return getById(id);
         } catch (EmptyResultDataAccessException ex) {
             log.error("failed to update certificate with id {}, cause {}", id, ex.getMessage());
             throw new ResourceNotFoundException("could not update certificate ", ex);

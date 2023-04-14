@@ -12,7 +12,6 @@ import java.util.Map;
  * <p>
  * related to gift certificates.
  *
- * @param <T> the type of the gift certificate
  */
 
 public interface GiftCertificateService extends BaseService<GiftCertificateDTO> {
@@ -23,7 +22,7 @@ public interface GiftCertificateService extends BaseService<GiftCertificateDTO> 
      * @throws ResourceNotFoundException if the gift certificate is not found
      */
 
-    void update(GiftCertificateDTO t) throws ResourceNotFoundException;
+    GiftCertificateDTO update(GiftCertificateDTO t) throws ResourceNotFoundException;
 
     /**
      * Gets a list of gift certificates with matching tags based on the provided criteria.
