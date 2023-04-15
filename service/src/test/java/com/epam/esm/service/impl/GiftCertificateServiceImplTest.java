@@ -1,6 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateDTO;
+import com.epam.esm.dto.GiftCertificateSaveDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.GiftCertificateMapper;
@@ -115,13 +116,13 @@ class GiftCertificateServiceImplTest {
     @Test
     public void shouldNotThrowExceptionAndSaveGiftCertificateWhenGetTagsIsNull() {
         var certificate = new GiftCertificate();
-        var giftCertificateDTO = new GiftCertificateDTO();
+        var giftCertificateSaveDTO = new GiftCertificateSaveDTO();
 
-        when(giftCertificateDTO.getTags()).thenReturn(null);
-        when(certificateMapper.toGiftCertificate(giftCertificateDTO)).thenReturn(certificate);
+        when(giftCertificateSaveDTO.getTags()).thenReturn(null);
+        when(certificateMapper.toGiftCertificate(giftCertificateSaveDTO)).thenReturn(certificate);
         when(repository.save(certificate)).thenReturn(1L);
 
-        assertDoesNotThrow(() -> certificateService.save(giftCertificateDTO));
+        assertDoesNotThrow(() -> certificateService.save(giftCertificateSaveDTO));
     }
 
 

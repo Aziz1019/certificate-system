@@ -1,6 +1,7 @@
 package com.epam.esm.mapper;
 
 import com.epam.esm.dto.GiftCertificateDTO;
+import com.epam.esm.dto.GiftCertificateSaveDTO;
 import com.epam.esm.model.GiftCertificate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,8 +13,9 @@ import org.mapstruct.Mapping;
 @org.mapstruct.Mapper(componentModel = "spring")
 public interface GiftCertificateMapper {
     GiftCertificateDTO toGiftCertificateDTO(GiftCertificate giftCertificate);
-
-
     GiftCertificate toGiftCertificate(GiftCertificateDTO giftCertificateDTO);
+
+    GiftCertificate toGiftCertificate(GiftCertificateSaveDTO giftCertificateSaveDTO);
+
 
 }

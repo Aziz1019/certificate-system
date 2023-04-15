@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.GiftCertificateDTO;
+import com.epam.esm.dto.GiftCertificateSaveDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 
@@ -28,6 +29,6 @@ public interface GiftCertificateService extends BaseService<GiftCertificateDTO> 
      * Gets a list of gift certificates with matching tags based on the provided criteria.
      *
      */
-
+    Long save(GiftCertificateSaveDTO giftCertificateSaveDTO) throws ServiceException;
     List<GiftCertificateDTO> getGiftCertificateWithTags(Map<String, String> allParams) throws ServiceException;
 }

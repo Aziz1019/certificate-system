@@ -1,6 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.GiftCertificateDTO;
+import com.epam.esm.dto.GiftCertificateSaveDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.GiftCertificateMapper;
@@ -76,24 +77,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public void save(GiftCertificateDTO giftCertificateDTO) throws ServiceException {
+    public Long save(GiftCertificateSaveDTO giftCertificateSaveDTO) throws ServiceException {
         log.info("> > > { Add New Gift Certificate }");
         try {
-            GiftCertificate giftCertificate = certificateMapper.toGiftCertificate(giftCertificateDTO);
-            Long certificateId = giftCertificateRepository.save(giftCertificate);
-
-            if (giftCertificateDTO.getTags() != null) {
-
-                giftCertificateDTO.getTags().forEach(tag -> {
-
-                    tag.setId(tagRepository.save(tagMapper.toTag(tag))
-                    );
-
-                    // Adding tag and certificate details to join table.
-                    giftCertificateTagRepository.save(new GiftCertificateTag(
-                            certificateId, tag.getId()));
-                });
-            }
+            return giftCertificateRepository.save(certificateMapper.toGiftCertificate(giftCertificateSaveDTO));
 
         } catch (EmptyResultDataAccessException e) {
             log.error("Could not create gift certificate - > {}", e.getMessage());

@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.config.AbstractTest;
 import com.epam.esm.dto.GiftCertificateDTO;
+import com.epam.esm.dto.GiftCertificateSaveDTO;
 import com.epam.esm.responseMessage.ResMessage;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
@@ -82,15 +83,15 @@ class GiftCertificateControllerTest extends AbstractTest {
     public void testCreateGiftCertificateReturnsNewGiftCertificate() throws Exception {
         // Mocking giftCertificateService Save method
         String uri = "/api/certificates";
-        GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
-        giftCertificateDTO.setName("Test Gift");
-        giftCertificateDTO.setDescription("Test Description");
-        giftCertificateDTO.setPrice("10.99");
-        giftCertificateDTO.setDuration("30");
+        GiftCertificateSaveDTO giftCertificateSaveDTO = new GiftCertificateSaveDTO();
+        giftCertificateSaveDTO.setName("Test Gift");
+        giftCertificateSaveDTO.setDescription("Test Description");
+        giftCertificateSaveDTO.setPrice("10.99");
+        giftCertificateSaveDTO.setDuration("30");
 
-        doNothing().when(giftCertificateService).save(giftCertificateDTO);
+        doNothing().when(giftCertificateService).save(giftCertificateSaveDTO);
 
-        String inputJson = super.mapToJson(giftCertificateDTO);
+        String inputJson = super.mapToJson(giftCertificateSaveDTO);
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(inputJson))

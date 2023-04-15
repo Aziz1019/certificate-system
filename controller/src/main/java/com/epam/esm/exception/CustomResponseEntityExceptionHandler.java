@@ -20,7 +20,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<Object> handleServiceException(ServiceException e, WebRequest request) {
-        ResMessage<Object> resMessage = new ResMessage<>(HttpStatus.BAD_REQUEST, e.getMessage());
+        ResMessage<Object> resMessage = new ResMessage<>(HttpStatus.BAD_REQUEST, e.getMessage(), e.getViolations());
         return handleExceptionInternal(e, resMessage, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 }

@@ -66,11 +66,16 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     @Override
     public Long save(GiftCertificate giftCertificate) {
         log.info("> > >  { Creating / Adding new giftCertificate data }");
-        return jdbcTemplate.queryForObject(TableQueries.SAVE_GIFT_CERTIFICATES.getQuery(), Long.class,
+        Long id = jdbcTemplate.queryForObject(TableQueries.SAVE_GIFT_CERTIFICATES.getQuery(), Long.class,
                 giftCertificate.getName(),
                 giftCertificate.getDescription(),
                 giftCertificate.getPrice(),
                 giftCertificate.getDuration());
+
+        if (giftCertificate.getTags() != null) {
+            joinTags(giftCertificate);
+        }
+        return id;
     }
 
     @Override

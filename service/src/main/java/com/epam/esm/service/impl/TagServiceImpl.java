@@ -52,10 +52,12 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void save(TagDTO tagDTO) throws ServiceException {
+    public Long save(TagDTO tagDTO) throws ServiceException {
         try {
             log.info("> > > { Saving tag } ");
             tagRepository.save(tagMapper.toTag(tagDTO));
+
+            return 1L;
         } catch (DataAccessException e) {
             log.error("Could not save TagDTO file, msg {}", e.getMessage());
             throw new ServiceException(e.getMessage(), e);

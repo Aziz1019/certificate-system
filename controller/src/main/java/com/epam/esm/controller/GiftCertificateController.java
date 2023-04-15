@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.GiftCertificateDTO;
+import com.epam.esm.dto.GiftCertificateSaveDTO;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.responseMessage.ResMessage;
 import com.epam.esm.service.GiftCertificateService;
@@ -57,22 +58,16 @@ public class GiftCertificateController {
     /**
      * Creates a new gift certificate.
      *
-     * @param giftCertificateDTO the gift certificate to be created.
+     * @param giftCertificateSaveDTO the gift certificate to be created.
      * @param result             the result of the binding.
      * @return a {@link ResMessage} with the status of the operation.
      */
     @PostMapping
-    public ResMessage<Object> createGiftCertificate(@Valid @RequestBody GiftCertificateDTO giftCertificateDTO, BindingResult result) throws ServiceException {
+    public ResMessage<Object> createGiftCertificate(@Valid @RequestBody GiftCertificateSaveDTO giftCertificateSaveDTO, BindingResult result) throws ServiceException {
         log.info("> > > { Post Request | Create a new GiftCertificate }");
-        if (result.hasErrors()) {
-            log.error("Something went wrong, check validation");
-            List<String> violations = new ArrayList<>();
-            result.getFieldErrors().forEach(fieldError
-                    -> violations.add(fieldError.getDefaultMessage()));
-            return new ResMessage<>(HttpStatus.BAD_REQUEST, "Could not create", violations);
-        }
-        giftCertificateService.save(giftCertificateDTO);
-        return new ResMessage<>(HttpStatus.OK, "Success");
+        Validator.validateForSave(result);
+        return new ResMessage<>(HttpStatus.OK, "Success", "Certificate with id: "
+                                + giftCertificateService.save(giftCertificateSaveDTO) + " has been created");
     }
 
     /**
@@ -85,7 +80,7 @@ public class GiftCertificateController {
     @PatchMapping
     public ResMessage<Object> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) throws  ServiceException {
         log.info("> > > { Patch Request | Update an existing GiftCertificate }");
-        Validator.validate(giftCertificateDTO.getId(),result);
+        Validator.validateForUpdate(giftCertificateDTO.getId(),result);
         return new ResMessage<>(HttpStatus.OK, "Success", giftCertificateService.update(giftCertificateDTO));
     }
 

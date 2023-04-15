@@ -13,6 +13,8 @@ public class ResMessage<T> {
     private String message;
     private T data;
 
+    private Long id;
+
     public ResMessage(HttpStatus statusCode, String message, T data) {
         this.statusCode = statusCode;
         this.message = message;
