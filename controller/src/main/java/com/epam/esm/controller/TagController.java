@@ -59,7 +59,7 @@ public class TagController {
     public ResponseEntity<ResMessage<Object>> createTag(@RequestBody @Valid TagDTO tagDTO, BindingResult result) throws ServiceException {
         log.info("Requesting create . . . ");
         Validator.validateForSave(result);
-        return new ResponseEntity<>(new ResMessage<>(HttpStatus.OK, "Success", tagService.save(tagDTO)), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ResMessage<>(HttpStatus.OK, "Success", "New Tag ID:" + tagService.save(tagDTO)), HttpStatus.CREATED);
     }
 
     /**
