@@ -9,6 +9,7 @@ import com.epam.esm.utils.Validator;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +52,7 @@ public class GiftCertificateController {
     @GetMapping("/{id}")
     public ResMessage<GiftCertificateDTO> getCertificateById(@PathVariable long id) {
         log.info("> > > { Get Request | Get Gift Certificate By Id }");
-        return new ResMessage<>(giftCertificateService.getById(id));
+        return new ResMessage<>(HttpStatus.OK, "Success", giftCertificateService.getById(id));
     }
 
 
@@ -63,11 +64,11 @@ public class GiftCertificateController {
      * @return a {@link ResMessage} with the status of the operation.
      */
     @PostMapping
-    public ResMessage<Object> createGiftCertificate(@Valid @RequestBody GiftCertificateSaveDTO giftCertificateSaveDTO, BindingResult result) throws ServiceException {
+    public ResponseEntity<ResMessage<Object>> createGiftCertificate(@Valid @RequestBody GiftCertificateSaveDTO giftCertificateSaveDTO, BindingResult result) throws ServiceException {
         log.info("> > > { Post Request | Create a new GiftCertificate }");
         Validator.validateForSave(result);
-        return new ResMessage<>(HttpStatus.OK, "Success", "Certificate with id: "
-                                + giftCertificateService.save(giftCertificateSaveDTO) + " has been created");
+        return new ResponseEntity<>(new ResMessage<>(HttpStatus.CREATED, "Success", "Certificate with id: "
+                + giftCertificateService.save(giftCertificateSaveDTO) + " has been created"), HttpStatus.CREATED);
     }
 
     /**
@@ -92,9 +93,9 @@ public class GiftCertificateController {
      */
 
     @DeleteMapping("/{id}")
-    public ResMessage<Object> deleteById(@PathVariable long id) throws ServiceException {
+    public ResponseEntity<ResMessage<Object>> deleteById(@PathVariable long id) throws ServiceException {
         giftCertificateService.delete(id);
-        return new ResMessage<>(HttpStatus.OK, "Success");
+        return new ResponseEntity<>(new ResMessage<>(HttpStatus.ACCEPTED, "Success"), HttpStatus.ACCEPTED);
     }
 
     /**
