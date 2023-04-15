@@ -53,7 +53,7 @@ class GiftCertificateServiceImplTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        certificateService = new GiftCertificateServiceImpl(repository, tagRepository, giftCertificateTagRepository, certificateMapper, tagMapper);
+        certificateService = new GiftCertificateServiceImpl(repository, giftCertificateTagRepository, certificateMapper);
         tagService = new TagServiceImpl(tagRepository, giftCertificateTagRepository, tagMapper);
     }
 

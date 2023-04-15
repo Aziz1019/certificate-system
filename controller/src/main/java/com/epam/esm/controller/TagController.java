@@ -4,13 +4,14 @@ import com.epam.esm.dto.TagDTO;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.responseMessage.ResMessage;
 import com.epam.esm.service.TagService;
+import com.epam.esm.utils.Validator;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,17 +56,10 @@ public class TagController {
      * @return a ResMessage indicating whether the TagDTO resource was successfully created or not, along with any error messages.
      */
     @PostMapping
-    public ResMessage<Object> createTag(@RequestBody @Valid TagDTO tagDTO, BindingResult result) throws ServiceException {
+    public ResponseEntity<ResMessage<Object>> createTag(@RequestBody @Valid TagDTO tagDTO, BindingResult result) throws ServiceException {
         log.info("Requesting create . . . ");
-        if (result.hasErrors()) {
-            log.error("Something went wrong, check validation");
-            List<String> violations = new ArrayList<>();
-            result.getFieldErrors().forEach(fieldError
-                    -> violations.add(fieldError.getDefaultMessage()));
-            return new ResMessage<>(HttpStatus.BAD_REQUEST, "Could not be created", violations);
-        }
-        tagService.save(tagDTO);
-        return new ResMessage<>(HttpStatus.OK, "Success");
+        Validator.validateForSave(result);
+        return new ResponseEntity<>(new ResMessage<>(HttpStatus.OK, "Success", tagService.save(tagDTO)), HttpStatus.CREATED);
     }
 
     /**

@@ -26,9 +26,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     private final JdbcTemplate jdbcTemplate;
     private final TagRowMapper tagRowMapper;
     private final GiftCertificateRowMapper certificateRowMapper;
-    
+
     private final TagRepository tagRepository;
-    
+
     private final GiftCertificateTagRepository certificateTagRepository;
 
     public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate, TagRowMapper tagRowMapper, GiftCertificateRowMapper certificateRowMapper, TagRepository tagRepository, GiftCertificateTagRepository certificateTagRepository) {
@@ -72,11 +72,14 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
                 giftCertificate.getPrice(),
                 giftCertificate.getDuration());
 
-        if (giftCertificate.getTags() != null) {
-            joinTags(giftCertificate);
+        if (giftCertificate.getTags() != null && id != null) {
+            giftCertificate.setId(id);
+            joinTagsSave(giftCertificate);
         }
+
         return id;
     }
+
 
     @Override
     public List<GiftCertificate> getGiftCertificateWithTags(String name, String tagName, String description, String sort) {
@@ -89,28 +92,24 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
             case "name_date" -> "name, create_date";
             default -> "name";
         };
-
+        // Searching for tables with tags attached to certificates
         String query = " SELECT gc.* FROM gift_certificate gc LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id"
-                            + " LEFT JOIN Tag t ON gct.tag_id = t.id"
-                            + " WHERE (t.name ILIKE '%"+nullChecker(tagName)+"%' AND (gc.description ILIKE '%"+nullChecker(description)+"%')"
-                            + " AND (gc.name ILIKE '%"+nullChecker(name)+"%')) order by " + sorted;
+                + " LEFT JOIN Tag t ON gct.tag_id = t.id"
+                + " WHERE (t.name ILIKE '%" + nullChecker(tagName) + "%' AND (gc.description ILIKE '%" + nullChecker(description) + "%')"
+                + " AND (gc.name ILIKE '%" + nullChecker(name) + "%')) order by " + sorted;
 
         List<GiftCertificate> certificates = jdbcTemplate.query(query, certificateRowMapper);
 
-        // Because we joined tag tables, if column without tag is searched due to joins it may not appear
-        // That's why we check for tagName, if it was null, we do our filter again this time without tag and its joins.
-        // Else we return empty or full certificates and let the Service layer deal with the rest.
-
-        if(certificates.isEmpty()){
-            if(tagName == null){
+        // Searching for tables where tags not attached and doesn't exist
+        if (certificates.isEmpty()) {
+            if (tagName == null) {
                 String updatedQuery = "SELECT gc.*" +
                         "FROM gift_certificate gc" +
                         " WHERE (gc.name ILIKE '%" + nullChecker(name) + "%')" +
                         " AND (gc.description ILIKE '%" + nullChecker(description) + "%')" +
                         " ORDER BY " + sorted;
                 return jdbcTemplate.query(updatedQuery, certificateRowMapper);
-            }
-            else 
+            } else
                 return certificates;
         }
         return certificates;
@@ -138,11 +137,21 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
                 certificate.getId());
 
         if (certificate.getTags() != null) {
-            joinTags(certificate);
+            joinTagsUpdate(certificate);
         }
     }
 
-    private void joinTags(GiftCertificate certificate) {
+
+    // Helper Methods
+    private void joinTagsSave(GiftCertificate giftCertificate) {
+        giftCertificate.getTags().forEach(
+                tag -> tag.setId(tagRepository.save(tag))
+        );
+        giftCertificate.getTags()
+                .forEach(tag -> certificateTagRepository.save(new GiftCertificateTag(giftCertificate.getId(), tag.getId())));
+    }
+
+    private void joinTagsUpdate(GiftCertificate certificate) {
         certificate.getTags().forEach(tag -> {
             Optional<Tag> byId = tagRepository.getById(tag.getId());
             if (byId.isEmpty()) {

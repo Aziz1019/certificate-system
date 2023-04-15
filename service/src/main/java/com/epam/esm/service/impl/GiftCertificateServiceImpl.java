@@ -27,18 +27,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateRepository giftCertificateRepository;
-    private final TagRepository tagRepository;
+
     private final GiftCertificateTagRepository giftCertificateTagRepository;
     private final GiftCertificateMapper certificateMapper;
-    private final TagMapper tagMapper;
 
 
-    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, TagRepository tagRepository, GiftCertificateTagRepository giftCertificateTagRepository, GiftCertificateMapper certificateMapper, TagMapper tagMapper) {
+    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, GiftCertificateTagRepository giftCertificateTagRepository, GiftCertificateMapper certificateMapper) {
         this.giftCertificateRepository = giftCertificateRepository;
-        this.tagRepository = tagRepository;
         this.giftCertificateTagRepository = giftCertificateTagRepository;
         this.certificateMapper = certificateMapper;
-        this.tagMapper = tagMapper;
     }
 
     /**
@@ -78,6 +75,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public Long save(GiftCertificateSaveDTO giftCertificateSaveDTO) throws ServiceException {
         log.info("> > > { Add New Gift Certificate }");
         try {
+
             return giftCertificateRepository.save(certificateMapper.toGiftCertificate(giftCertificateSaveDTO));
 
         } catch (EmptyResultDataAccessException e) {
@@ -125,17 +123,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             String sort = allParams.getOrDefault("sort", "name_asc");
 
             List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
+
             // Checking if filtered lists have values, if not, throwing proper exception
             if(giftCertificateWithTags.isEmpty()){
                 throw new ServiceException("No Data was found", new Throwable("No Data Found"));
             }
-            // Setting certificates' tags if available
+
             giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
-
-            // Removing duplicates if available from the list due to multiple joins in the main query
             List<GiftCertificate> filteredList = new ArrayList<>(new HashSet<>(giftCertificateWithTags));
-
-            // Turning models to DTOs for Controller
             return filteredList.stream().map(certificateMapper::toGiftCertificateDTO).toList();
 
         } catch (DataAccessException ex) {
