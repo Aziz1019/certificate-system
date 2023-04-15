@@ -85,29 +85,35 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
             case "name_desc" -> "name DESC";
             case "date_asc" -> "create_date";
             case "date_desc" -> "create_date DESC";
-
             case "name_date_desc" -> "name, create_date DESC";
             case "name_date" -> "name, create_date";
-
             default -> "name";
         };
-// refactor
-        String queryWithTag = "SELECT gc.*" +
-                "FROM gift_certificate gc" +
-                "         LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id" +
-                "         LEFT JOIN Tag t ON gct.tag_id = t.id" +
-                " WHERE (t.name ILIKE '%" + nullChecker(tagName) + "%')" +
-                " ORDER BY " + sorted;
 
-        String queryWithNameOrDescription = "SELECT gc.*" +
-                "FROM gift_certificate gc" +
-                " WHERE (gc.name ILIKE '%" + nullChecker(name) + "%')" +
-                " AND (gc.description ILIKE '%" + nullChecker(description) + "%')" +
-                " ORDER BY " + sorted;
+        String query = " SELECT gc.* FROM gift_certificate gc LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id"
+                            + " LEFT JOIN Tag t ON gct.tag_id = t.id"
+                            + " WHERE (t.name ILIKE '%"+nullChecker(tagName)+"%' AND (gc.description ILIKE '%"+nullChecker(description)+"%')"
+                            + " AND (gc.name ILIKE '%"+nullChecker(name)+"%')) order by " + sorted;
 
-        String query = !StringUtils.hasLength(tagName) ? queryWithNameOrDescription : queryWithTag;
+        List<GiftCertificate> certificates = jdbcTemplate.query(query, certificateRowMapper);
 
-        return jdbcTemplate.query(query, certificateRowMapper);
+        // Because we joined tag tables, if column without tag is searched due to joins it may not appear
+        // That's why we check for tagName, if it was null, we do our filter again this time without tag and its joins.
+        // Else we return empty or full certificates and let the Service layer deal with the rest.
+
+        if(certificates.isEmpty()){
+            if(tagName == null){
+                String updatedQuery = "SELECT gc.*" +
+                        "FROM gift_certificate gc" +
+                        " WHERE (gc.name ILIKE '%" + nullChecker(name) + "%')" +
+                        " AND (gc.description ILIKE '%" + nullChecker(description) + "%')" +
+                        " ORDER BY " + sorted;
+                return jdbcTemplate.query(updatedQuery, certificateRowMapper);
+            }
+            else 
+                return certificates;
+        }
+        return certificates;
     }
 
     @Override

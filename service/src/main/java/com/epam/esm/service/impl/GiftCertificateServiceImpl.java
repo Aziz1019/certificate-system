@@ -19,9 +19,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -120,14 +118,26 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificateDTO> getGiftCertificateWithTags(Map<String, String> allParams) throws ServiceException {
         try {
+
             String name = allParams.get("name");
             String description = allParams.get("description");
             String tagName = allParams.get("tag");
             String sort = allParams.getOrDefault("sort", "name_asc");
 
             List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
+            // Checking if filtered lists have values, if not, throwing proper exception
+            if(giftCertificateWithTags.isEmpty()){
+                throw new ServiceException("No Data was found", new Throwable("No Data Found"));
+            }
+            // Setting certificates' tags if available
             giftCertificateWithTags.forEach(giftCertificateRepository::tagSetter);
-            return giftCertificateWithTags.stream().map(certificateMapper::toGiftCertificateDTO).toList();
+
+            // Removing duplicates if available from the list due to multiple joins in the main query
+            List<GiftCertificate> filteredList = new ArrayList<>(new HashSet<>(giftCertificateWithTags));
+
+            // Turning models to DTOs for Controller
+            return filteredList.stream().map(certificateMapper::toGiftCertificateDTO).toList();
+
         } catch (DataAccessException ex) {
             log.error("failed to filter certificate with params, cause {}", ex.getMessage());
             throw new ServiceException("could not update certificate ", ex);
