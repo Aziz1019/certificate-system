@@ -3,6 +3,7 @@ package com.epam.esm.repository;
 import com.epam.esm.model.GiftCertificateTag;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
 
@@ -34,5 +35,6 @@ public interface GiftCertificateTagRepository {
      */
 
     void deleteByTagId(long id);
+
 
 }

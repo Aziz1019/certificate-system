@@ -8,10 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Slf4j
 @Repository
 public class TagRepositoryImpl implements TagRepository {
@@ -43,6 +45,12 @@ public class TagRepositoryImpl implements TagRepository {
     public Long save(Tag tag) {
         log.info("> > > Loading { Saving / Adding Tags }");
         return jdbcTemplate.queryForObject(TableQueries.SAVE_TAG_NAME.getQuery(), Long.class, tag.getName());
+    }
+
+    @Override
+    public void update(Tag tag) {
+        log.info("> > > Loading { Update / Adding Update }");
+        jdbcTemplate.update(TableQueries.UPDATE_TAG_BY_ID.getQuery(), tag.getName(), tag.getId());
     }
 
     @Override

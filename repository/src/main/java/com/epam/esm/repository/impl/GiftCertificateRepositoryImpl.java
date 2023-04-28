@@ -13,22 +13,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
 
-
+@Transactional
 @Slf4j
 @Repository
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
     private final JdbcTemplate jdbcTemplate;
     private final TagRowMapper tagRowMapper;
     private final GiftCertificateRowMapper certificateRowMapper;
-
     private final TagRepository tagRepository;
-
     private final GiftCertificateTagRepository certificateTagRepository;
 
     public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate, TagRowMapper tagRowMapper, GiftCertificateRowMapper certificateRowMapper, TagRepository tagRepository, GiftCertificateTagRepository certificateTagRepository) {
@@ -74,7 +73,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
         if (giftCertificate.getTags() != null && id != null) {
             giftCertificate.setId(id);
-            joinTagsSave(giftCertificate);
+            joinTags(giftCertificate);
         }
 
         return id;
@@ -137,31 +136,22 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
                 certificate.getId());
 
         if (certificate.getTags() != null) {
-            joinTagsUpdate(certificate);
+            joinTags(certificate);
         }
     }
 
 
-    // Helper Methods
-    private void joinTagsSave(GiftCertificate giftCertificate) {
-        giftCertificate.getTags().forEach(
-                tag -> tag.setId(tagRepository.save(tag))
-        );
-        giftCertificate.getTags()
-                .forEach(tag -> certificateTagRepository.save(new GiftCertificateTag(giftCertificate.getId(), tag.getId())));
-    }
-
-    private void joinTagsUpdate(GiftCertificate certificate) {
+    private void joinTags(GiftCertificate certificate) {
         certificate.getTags().forEach(tag -> {
             Optional<Tag> byId = tagRepository.getById(tag.getId());
             if (byId.isEmpty()) {
                 tag.setId(tagRepository.save(tag));
+                certificateTagRepository.save(new GiftCertificateTag(
+                        certificate.getId(), tag.getId()));
+            } else {
+                tagRepository.update(tag);
             }
         });
-        // Using Join table for joining tag and certificate
-        certificate.getTags()
-                .forEach(tag -> certificateTagRepository.save(new GiftCertificateTag(
-                        certificate.getId(), tag.getId())));
     }
 
     public void setAllTags(GiftCertificate certificate) {

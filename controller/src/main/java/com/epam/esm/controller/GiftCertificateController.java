@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +59,7 @@ public class GiftCertificateController {
      * Creates a new gift certificate.
      *
      * @param giftCertificateSaveDTO the gift certificate to be created.
-     * @param result             the result of the binding.
+     * @param result                 the result of the binding.
      * @return a {@link ResMessage} with the status of the operation.
      */
     @PostMapping
@@ -79,9 +78,9 @@ public class GiftCertificateController {
      * @return a {@link ResMessage} with the status of the operation.
      */
     @PatchMapping
-    public ResMessage<Object> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) throws  ServiceException {
+    public ResMessage<Object> update(@RequestBody @Valid GiftCertificateDTO giftCertificateDTO, BindingResult result) throws ServiceException {
         log.info("> > > { Patch Request | Update an existing GiftCertificate }");
-        Validator.validateForUpdate(giftCertificateDTO.getId(),result);
+        Validator.validateForUpdate(giftCertificateDTO.getId(), result);
         return new ResMessage<>(HttpStatus.OK, "Success", giftCertificateService.update(giftCertificateDTO));
     }
 

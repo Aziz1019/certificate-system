@@ -5,32 +5,24 @@ import com.epam.esm.dto.GiftCertificateSaveDTO;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.GiftCertificateMapper;
-import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.model.GiftCertificate;
-import com.epam.esm.model.GiftCertificateTag;
-import com.epam.esm.model.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.GiftCertificateTagRepository;
-import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Transactional
 @Service
 @Slf4j
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateRepository giftCertificateRepository;
-
     private final GiftCertificateTagRepository giftCertificateTagRepository;
     private final GiftCertificateMapper certificateMapper;
-
 
     public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, GiftCertificateTagRepository giftCertificateTagRepository, GiftCertificateMapper certificateMapper) {
         this.giftCertificateRepository = giftCertificateRepository;
@@ -40,11 +32,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     /**
      * Retrieves all gift certificates from the repository and maps them to GiftCertificateDTO objects.
-     *
      * @return a list of GiftCertificateDTO objects representing all gift certificates in the repository
      * @throws ResourceNotFoundException if an error occurs while accessing the repository or if no gift certificates are found
      */
-
     @Override
     public List<GiftCertificateDTO> getAll() throws ResourceNotFoundException {
         try {
@@ -58,7 +48,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new ResourceNotFoundException("Gift Certificates were not found!", e);
         }
     }
-
     @Override
     public GiftCertificateDTO getById(long id) throws ResourceNotFoundException {
         log.info("> > > {Get Gift Certificate By ID}");
@@ -70,7 +59,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                     throw new ResourceNotFoundException(errorMessage);
                 });
     }
-
     @Override
     public Long save(GiftCertificateSaveDTO giftCertificateSaveDTO) throws ServiceException {
         log.info("> > > { Add New Gift Certificate }");
@@ -83,7 +71,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new ServiceException("Error saving resource", e);
         }
     }
-
     @Override
     public void delete(long id) throws ResourceNotFoundException {
         try {
@@ -97,7 +84,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new ResourceNotFoundException("Certificate could not be deleted! ", ex);
         }
     }
-
     @Override
     public GiftCertificateDTO update(GiftCertificateDTO giftCertificateDTO) throws ResourceNotFoundException {
         long id = giftCertificateDTO.getId();
@@ -112,7 +98,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new ResourceNotFoundException("could not update certificate ", ex);
         }
     }
-
     @Override
     public List<GiftCertificateDTO> getGiftCertificateWithTags(Map<String, String> allParams) throws ServiceException {
         try {
@@ -125,7 +110,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             List<GiftCertificate> giftCertificateWithTags = giftCertificateRepository.getGiftCertificateWithTags(name, tagName, description, sort);
 
             // Checking if filtered lists have values, if not, throwing proper exception
-            if(giftCertificateWithTags.isEmpty()){
+            if (giftCertificateWithTags.isEmpty()) {
                 throw new ServiceException("No Data was found", new Throwable("No Data Found"));
             }
 

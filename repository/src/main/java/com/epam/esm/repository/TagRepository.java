@@ -14,4 +14,5 @@ public interface TagRepository extends BaseRepository<Tag> {
      @return the ID of the newly created tag
      */
     Long save(Tag t);
+    void update(Tag t);
 }

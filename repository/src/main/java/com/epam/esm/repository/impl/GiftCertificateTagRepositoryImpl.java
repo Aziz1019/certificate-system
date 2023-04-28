@@ -6,7 +6,9 @@ import com.epam.esm.repository.GiftCertificateTagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Repository
 @Slf4j
 public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepository {
