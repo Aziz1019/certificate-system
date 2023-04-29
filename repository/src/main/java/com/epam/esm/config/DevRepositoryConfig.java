@@ -49,6 +49,11 @@ public class DevRepositoryConfig {
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
+        dataSource.setInitialSize(10);
+        dataSource.setMaxTotal(30);
+        dataSource.setMaxIdle(5);
+        dataSource.setMinIdle(10);
+        dataSource.setMaxWaitMillis(30000); // 30
         return dataSource;
     }
 
