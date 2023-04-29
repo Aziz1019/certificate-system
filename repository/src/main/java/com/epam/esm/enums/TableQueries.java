@@ -14,6 +14,7 @@ public enum TableQueries {
      */
     GET_ALL_GIFT_CERTIFICATES("select * from gift_certificate order by id"),
     GET_GIFT_CERTIFICATES_BY_ID("select * from gift_certificate where id = ?"),
+    GET_GIFT_CERTIFICATE_TAG_BY_TAG_ID("select * from gift_certificate_tag where tag_id = ?"),
     GET_GIFT_CERTIFICATES_BY_NAME("select * from gift_certificate where name like ?"),
     GET_GIFT_CERTIFICATES_BY_DESCRIPTION("select * from gift_certificate where description like ?"),
 

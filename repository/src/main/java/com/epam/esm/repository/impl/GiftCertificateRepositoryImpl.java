@@ -65,11 +65,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     @Override
     public Long save(GiftCertificate giftCertificate) {
         log.info("> > >  { Creating / Adding new giftCertificate data }");
-        Long id = jdbcTemplate.queryForObject(TableQueries.SAVE_GIFT_CERTIFICATES.getQuery(), Long.class,
-                giftCertificate.getName(),
-                giftCertificate.getDescription(),
-                giftCertificate.getPrice(),
-                giftCertificate.getDuration());
+        Long id = jdbcTemplate.queryForObject(TableQueries.SAVE_GIFT_CERTIFICATES.getQuery(), Long.class, giftCertificate.getName(), giftCertificate.getDescription(), giftCertificate.getPrice(), giftCertificate.getDuration());
 
         if (giftCertificate.getTags() != null && id != null) {
             giftCertificate.setId(id);
@@ -92,24 +88,16 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
             default -> "name";
         };
         // Searching for tables with tags attached to certificates
-        String query = " SELECT gc.* FROM gift_certificate gc LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id"
-                + " LEFT JOIN Tag t ON gct.tag_id = t.id"
-                + " WHERE (t.name ILIKE '%" + nullChecker(tagName) + "%' AND (gc.description ILIKE '%" + nullChecker(description) + "%')"
-                + " AND (gc.name ILIKE '%" + nullChecker(name) + "%')) order by " + sorted;
+        String query = " SELECT gc.* FROM gift_certificate gc LEFT JOIN gift_certificate_tag gct ON gc.id = gct.certificate_id" + " LEFT JOIN Tag t ON gct.tag_id = t.id" + " WHERE (t.name ILIKE '%" + nullChecker(tagName) + "%' AND (gc.description ILIKE '%" + nullChecker(description) + "%')" + " AND (gc.name ILIKE '%" + nullChecker(name) + "%')) order by " + sorted;
 
         List<GiftCertificate> certificates = jdbcTemplate.query(query, certificateRowMapper);
 
         // Searching for tables where tags not attached and doesn't exist
         if (certificates.isEmpty()) {
             if (tagName == null) {
-                String updatedQuery = "SELECT gc.*" +
-                        "FROM gift_certificate gc" +
-                        " WHERE (gc.name ILIKE '%" + nullChecker(name) + "%')" +
-                        " AND (gc.description ILIKE '%" + nullChecker(description) + "%')" +
-                        " ORDER BY " + sorted;
+                String updatedQuery = "SELECT gc.*" + "FROM gift_certificate gc" + " WHERE (gc.name ILIKE '%" + nullChecker(name) + "%')" + " AND (gc.description ILIKE '%" + nullChecker(description) + "%')" + " ORDER BY " + sorted;
                 return jdbcTemplate.query(updatedQuery, certificateRowMapper);
-            } else
-                return certificates;
+            } else return certificates;
         }
         return certificates;
     }
@@ -128,12 +116,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     @Override
     public void update(GiftCertificate certificate) {
         log.info("> > > Loading { Updating GiftCertificates By ID } ");
-        jdbcTemplate.update(TableQueries.UPDATE_GIFT_CERTIFICATES.getQuery(),
-                certificate.getName(),
-                certificate.getDescription(),
-                certificate.getPrice(),
-                certificate.getDuration(),
-                certificate.getId());
+        jdbcTemplate.update(TableQueries.UPDATE_GIFT_CERTIFICATES.getQuery(), certificate.getName(), certificate.getDescription(), certificate.getPrice(), certificate.getDuration(), certificate.getId());
 
         if (certificate.getTags() != null) {
             joinTags(certificate);
@@ -144,19 +127,23 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     private void joinTags(GiftCertificate certificate) {
         certificate.getTags().forEach(tag -> {
             Optional<Tag> byId = tagRepository.getById(tag.getId());
+            // If new tags are introduced save and connect directly.
             if (byId.isEmpty()) {
                 tag.setId(tagRepository.save(tag));
-                certificateTagRepository.save(new GiftCertificateTag(
-                        certificate.getId(), tag.getId()));
-            } else {
-                tagRepository.update(tag);
+                certificateTagRepository.save(new GiftCertificateTag(certificate.getId(), tag.getId()));
+            }
+            // Else check for binding if there are no bindings bind existing tags.
+            else {
+                if (!certificateTagRepository.checkForBinding(tag.getId()))
+                    certificateTagRepository.save(new GiftCertificateTag(certificate.getId(), tag.getId()));
+                else
+                    tagRepository.update(tag);
             }
         });
     }
 
     public void setAllTags(GiftCertificate certificate) {
-        certificate.setTags(new TreeSet<>(jdbcTemplate.query(
-                TableQueries.GET_ALL_GIFT_CERTIFICATES_TAGS.getQuery(), tagRowMapper, certificate.getId())));
+        certificate.setTags(new TreeSet<>(jdbcTemplate.query(TableQueries.GET_ALL_GIFT_CERTIFICATES_TAGS.getQuery(), tagRowMapper, certificate.getId())));
     }
 
     public String nullChecker(String name) {

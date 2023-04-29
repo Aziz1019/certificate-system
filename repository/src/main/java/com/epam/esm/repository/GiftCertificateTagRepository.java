@@ -37,4 +37,5 @@ public interface GiftCertificateTagRepository {
     void deleteByTagId(long id);
 
 
+    Boolean checkForBinding(Long id);
 }
